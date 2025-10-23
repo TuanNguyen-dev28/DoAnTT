@@ -1,4 +1,4 @@
-package ecommerce.project.Controller;
+package ecommerce.project.controller;
 
 import ecommerce.project.model.Product;
 import ecommerce.project.repository.ProductRepository;
