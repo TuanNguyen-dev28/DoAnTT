@@ -13,23 +13,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Controller
 public class UserController { // Đổi tên class
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/register")
     public String showRegisterPage() {
@@ -49,9 +47,21 @@ public class UserController { // Đổi tên class
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        Role userRole = roleRepository.findByName("ROLE_USER");
-        user.setRoles(Collections.singleton(userRole));
+
+        Optional<Role> userRoleOpt = roleRepository.findByName("ROLE_USER");
+        if (userRoleOpt.isEmpty()) {
+            // Xử lý trường hợp không tìm thấy role, ví dụ: báo lỗi
+            model.addAttribute("error", "Default role 'ROLE_USER' not found in database.");
+            return "register";
+        }
+        user.setRoles(Collections.singleton(userRoleOpt.get()));
+
         userRepository.save(user);
         return "redirect:/login?register_success";
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
     }
 }

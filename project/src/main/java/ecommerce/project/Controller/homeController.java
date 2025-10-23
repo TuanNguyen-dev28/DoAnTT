@@ -8,7 +8,7 @@ public class homeController {
 
     @GetMapping("/")
     public String home() {
-        return "index"; // sẽ tìm /templates/index.html
+        return "index";
     }
 
 }
