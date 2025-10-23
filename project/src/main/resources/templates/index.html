@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <title>Kaira - Bootstrap 5 Fashion Store HTML CSS Template</title>
     <meta charset="utf-8" />
@@ -732,6 +736,46 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
                   </li>
+                  <!-- Thêm link đăng nhập/đăng xuất -->
+                  <li class="nav-item d-lg-none">
+                    <a
+                      sec:authorize="!isAuthenticated()"
+                      th:href="@{/login}"
+                      class="nav-link"
+                      >Login</a
+                    >
+                    <a
+                      sec:authorize="isAuthenticated()"
+                      th:href="@{/logout}"
+                      class="nav-link"
+                      >Logout</a
+                    >
+                  </li>
+                  <li
+                    class="nav-item dropdown d-lg-none"
+                    sec:authorize="isAuthenticated()"
+                  >
+                    <a
+                      class="nav-link dropdown-toggle"
+                      href="#"
+                      id="userAccountDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <span sec:authentication="name"></span>
+                    </a>
+                    <ul
+                      class="dropdown-menu"
+                      aria-labelledby="userAccountDropdown"
+                    >
+                      <li><a class="dropdown-item" href="#">My Account</a></li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                      </li>
+                    </ul>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -739,6 +783,20 @@
 
           <div class="col-3 col-lg-auto">
             <ul class="list-unstyled d-flex m-0">
+              <!-- Hiển thị tên người dùng và nút logout nếu đã đăng nhập -->
+              <li class="d-none d-lg-block" sec:authorize="isAuthenticated()">
+                <span class="text-uppercase mx-3"
+                  >Hi, <span sec:authentication="name"></span
+                ></span>
+              </li>
+              <li class="d-none d-lg-block" sec:authorize="isAuthenticated()">
+                <a th:href="@{/logout}" class="text-uppercase mx-3">Logout</a>
+              </li>
+
+              <!-- Hiển thị nút Login nếu chưa đăng nhập -->
+              <li class="d-none d-lg-block" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="text-uppercase mx-3">Login</a>
+              </li>
               <li class="d-none d-lg-block">
                 <a th:href="@{/}" class="text-uppercase mx-3"
                   >Wishlist <span class="wishlist-count">(0)</span>

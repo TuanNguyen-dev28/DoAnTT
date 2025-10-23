@@ -21,3 +21,30 @@ INSERT INTO product (name, price, image_url) VALUES
 
 -- 5. (Tùy chọn) Kiểm tra xem dữ liệu đã được thêm thành công chưa
 SELECT * FROM product;
+
+-- 6. Tạo bảng 'users' để lưu thông tin người dùng
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- 7. Tạo bảng 'roles' để lưu các vai trò
+CREATE TABLE roles (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- 8. Tạo bảng join 'users_roles' để quản lý mối quan hệ nhiều-nhiều
+CREATE TABLE users_roles (
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+-- 9. Thêm các vai trò mặc định
+INSERT INTO roles (name) VALUES ('ROLE_USER'), ('ROLE_ADMIN');
