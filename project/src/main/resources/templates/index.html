@@ -462,11 +462,12 @@
 
     <nav
       class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center"
+      id="header-nav"
     >
       <div class="container-fluid">
         <div class="row justify-content-between align-items-center w-100">
           <div class="col-auto">
-            <a class="navbar-brand text-white" href="index.html">
+            <a class="navbar-brand text-white" th:href="@{/}">
               <svg
                 width="112"
                 height="45"
@@ -508,7 +509,7 @@
                 ></button>
               </div>
 
-              <div class="offcanvas-body">
+              <div .08ss="offcanvas-body">
                 <ul
                   class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-md-5 pe-3"
                 >
@@ -563,48 +564,28 @@
                       aria-labelledby="dropdownShop"
                     >
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Sidebar
+                        <a th:href="@{/shop/accessories}" class="dropdown-item item-anchor"
+                          >Accessories
+                        </a>
+                      </li>
+                      <li>
+                        <a th:href="@{/shop/clothes}" class="dropdown-item item-anchor"
+                          >Clothes
+                        </a>
+                      </li>
+                      <li>
+                        <a th:href="@{/shop/best-sellers}" class="dropdown-item item-anchor"
+                          >Best Sellers
+                        </a>
+                      </li>
+                      <li>
+                        <a th:href="@{/shop/limited-edition}" class="dropdown-item item-anchor"
+                          >Limited Edition
                         </a>
                       </li>
                       <li>
                         <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Three Column
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Three Column Wide
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Four Column
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Four Column Wide
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Six Column
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Six Column Wide
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Single Product
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Single Product V2
+                          >New Arrivals
                         </a>
                       </li>
                     </ul>
