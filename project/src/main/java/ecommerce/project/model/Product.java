@@ -1,11 +1,9 @@
 package ecommerce.project.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "product")
 public class Product {
 
     @Id
@@ -15,18 +13,12 @@ public class Product {
     private String name;
     private double price;
     private String imageUrl;
+    private String category;
+    private boolean isBestSeller;
+    private boolean isNewArrival;
+    private boolean isLimitedEdition;
 
-    // Constructors
-    public Product() {
-    }
-
-    public Product(String name, double price, String imageUrl) {
-        this.name = name;
-        this.price = price;
-        this.imageUrl = imageUrl;
-    }
-
-    // Getters and Setters
+    // Getters và Setters
     public Long getId() {
         return id;
     }
@@ -58,6 +50,36 @@ public class Product {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public boolean isBestSeller() {
+        return isBestSeller;
+    }
+
+    public void setBestSeller(boolean bestSeller) {
+        isBestSeller = bestSeller;
+    }
+
+    public boolean isNewArrival() {
+        return isNewArrival;
+    }
+
+    public void setNewArrival(boolean newArrival) {
+        isNewArrival = newArrival;
+    }
+
+    public boolean isLimitedEdition() {
+        return isLimitedEdition;
+    }
+
+    public void setLimitedEdition(boolean limitedEdition) {
+        isLimitedEdition = limitedEdition;
+    }
 }
-
-
