@@ -2,10 +2,12 @@ package ecommerce.project.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "roles")
 public class Role {
     @Id
@@ -13,4 +15,8 @@ public class Role {
     private Long id;
 
     private String name;
+
+    public Role(String name) {
+        this.name = name;
+    }
 }

@@ -23,7 +23,9 @@ public class User {
 
     private boolean enabled = true;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // Sử dụng CascadeType.PERSIST và MERGE thay vì ALL để tránh việc xóa Role khi xóa User.
+    // FetchType.EAGER là cần thiết ở đây để Spring Security có thể tải vai trò của người dùng khi xác thực.
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
