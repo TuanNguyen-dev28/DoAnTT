@@ -794,6 +794,13 @@
                   >Hi, <span sec:authentication="name"></span
                 ></span>
               </li>
+              <!-- Thêm link Admin Dashboard -->
+              <li class="d-none d-lg-block" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/dashboard}" class="text-uppercase mx-3"
+                  >Admin</a
+                >
+              </li>
+
               <!-- Sửa link logout cho màn hình lớn -->
               <li class="d-none d-lg-block" sec:authorize="isAuthenticated()">
                 <a

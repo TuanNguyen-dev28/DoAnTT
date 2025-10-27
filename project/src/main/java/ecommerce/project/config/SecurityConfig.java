@@ -26,6 +26,8 @@ public class SecurityConfig {
                         // Cho phép truy cập các tài nguyên tĩnh và trang chủ, trang đăng nhập
                         .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/vendor.css", "/style.css").permitAll()
                         .requestMatchers("/login", "/register").permitAll()
+                        // Yêu cầu vai trò ADMIN cho các trang admin
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         // Yêu cầu xác thực cho tất cả các request khác
                         .anyRequest().authenticated()
                 )
@@ -34,7 +36,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         // Endpoint xử lý đăng nhập (phải khớp với action trong form)
                         .loginProcessingUrl("/login")
-                        // Chuyển hướng sau khi đăng nhập thành công
+                        // Chuyển hướng mặc định sau khi đăng nhập thành công
                         .defaultSuccessUrl("/", true)
                         // Cho phép tất cả mọi người truy cập trang đăng nhập
                         .permitAll()
