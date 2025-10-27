@@ -48,3 +48,15 @@ CREATE TABLE users_roles (
 
 -- 9. Thêm các vai trò mặc định
 INSERT INTO roles (name) VALUES ('ROLE_USER'), ('ROLE_ADMIN');
+
+-- 10. Thêm người dùng 'admin' và 'user' với mật khẩu đã được mã hóa
+-- Mật khẩu gốc là '28122005'. Chuỗi hash dưới đây được tạo bằng BCryptPasswordEncoder.
+-- Mật khẩu gốc của 'user' là 'password'.
+INSERT INTO users (username, password, email, enabled) VALUES
+('admin', '$2a$10$E.qgXfFTvVCLuY2bL9VvJO2iN0c7uVSCQxGWzmcj2/a/kZ5c.wLqG', 'admin@example.com', TRUE),
+('user', '$2a$10$PrI5Gk9L.tSZiW9FXhTS8O8Mz9E97k2FZbFvGFFaSsiTUIl.TCrFu', 'user@example.com', TRUE);
+
+-- 11. Gán vai trò cho người dùng
+INSERT INTO users_roles (user_id, role_id) VALUES
+((SELECT id FROM users WHERE username = 'admin'), (SELECT id FROM roles WHERE name = 'ROLE_ADMIN')),
+((SELECT id FROM users WHERE username = 'user'), (SELECT id FROM roles WHERE name = 'ROLE_USER'));
