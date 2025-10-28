@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Controller
-public class UserController { // Đổi tên class
+public class UserController { 
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -52,7 +52,9 @@ public class UserController { // Đổi tên class
             model.addAttribute("error", "Default role 'ROLE_USER' not found in database.");
             return "register";
         }
-        user.setRoles(Collections.singleton(userRoleOpt.get()));
+        // Thêm vai trò vào Set đã được khởi tạo trong Entity User,
+        // thay vì thay thế nó bằng một Set mới.
+        user.getRoles().add(userRoleOpt.get());
 
         userRepository.save(user);
         return "redirect:/login?register_success";
