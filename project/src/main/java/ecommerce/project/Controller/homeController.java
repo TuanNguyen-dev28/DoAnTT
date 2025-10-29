@@ -53,4 +53,9 @@ public class homeController {
         model.addAttribute("title", "New Arrivals");
         return "new-arrivals";
     }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "contact";
+    }
 }

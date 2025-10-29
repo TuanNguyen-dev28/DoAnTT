@@ -676,7 +676,7 @@
                         </a>
                       </li>
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
+                        <a th:href="@{/contact}" class="dropdown-item item-anchor"
                           >Contact
                         </a>
                       </li>
@@ -708,10 +708,10 @@
                     </ul>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Blog</a>
+                    <a class="nav-link" href="#">Blog</a>_
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
+                    <a class="nav-link" th:href="@{/contact}">Contact</a>
                   </li>
                 </ul>
               </div>
@@ -2038,7 +2038,7 @@
                   <a th:href="@{/}" class="item-anchor">Single item</a>
                 </li>
                 <li class="menu-item">
-                  <a th:href="@{/}" class="item-anchor">Contact</a>
+                  <a th:href="@{/contact}" class="item-anchor">Contact</a>
                 </li>
               </ul>
             </div>
@@ -2059,7 +2059,7 @@
                   <a href="#" class="item-anchor">Shipping + Delivery</a>
                 </li>
                 <li class="menu-item">
-                  <a href="#" class="item-anchor">Contact Us</a>
+                  <a th:href="@{/contact}" class="item-anchor">Contact Us</a>
                 </li>
                 <li class="menu-item">
                   <a href="#" class="item-anchor">Find us easy</a>
