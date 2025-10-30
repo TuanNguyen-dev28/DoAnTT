@@ -1,12 +1,14 @@
 package ecommerce.project.controller;
-package ecommerce.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import ecommerce.project.entity.Product;
 import ecommerce.project.repository.ProductRepository;
+import java.util.Optional;
 
 @Controller
 public class homeController {
@@ -54,8 +56,16 @@ public class homeController {
         model.addAttribute("title", "New Arrivals");
         return "new-arrivals";
     }
-    public String home() {
-        return "index";
+
+    @GetMapping("/product/{id}")
+    public String productDetail(@PathVariable Long id, Model model) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            model.addAttribute("product", productOpt.get());
+            return "product-detail";
+        } else {
+            return "redirect:/";
+        }
     }
 
 }

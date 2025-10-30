@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <title th:text="${product.name} + ' - Kaira'"></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/vendor.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+    />
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <section class="product-detail-section py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="image-holder">
+              <img
+                th:src="@{'/' + ${product.imageUrl}}"
+                alt="product"
+                class="img-fluid"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="product-info">
+              <h1 class="product-title" th:text="${product.name}">
+                Product Name
+              </h1>
+              <div class="product-price fs-3 my-3">
+                <span
+                  th:text="'$' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"
+                ></span>
+              </div>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+                euismod, nisl nec ultricies lacinia, nisl nisl aliquet nisl,
+                eget aliquam nisl nisl sit amet nisl.
+              </p>
+
+              <form th:action="@{/add-to-cart}" method="post" class="d-flex">
+                <input
+                  type="hidden"
+                  name="productId"
+                  th:value="${product.id}"
+                />
+                <div class="input-group" style="max-width: 150px">
+                  <span class="input-group-btn">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-number"
+                      data-type="minus"
+                      data-field="quantity"
+                    >
+                      <span class="fa fa-minus">-</span>
+                    </button>
+                  </span>
+                  <input
+                    type="text"
+                    name="quantity"
+                    class="form-control input-number text-center"
+                    value="1"
+                    min="1"
+                    max="100"
+                  />
+                  <span class="input-group-btn">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-number"
+                      data-type="plus"
+                      data-field="quantity"
+                    >
+                      <span class="fa fa-plus">+</span>
+                    </button>
+                  </span>
+                </div>
+                <button type="submit" class="btn btn-dark text-uppercase ms-3">
+                  Add to cart
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/plugins.js}"></script>
+    <script th:src="@{/js/SmoothScroll.js}"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script th:src="@{/js/script.min.js}"></script>
+    <script>
+      // Script to handle quantity increment/decrement
+      $(document).ready(function () {
+        $(".btn-number").click(function (e) {
+          e.preventDefault();
+
+          var fieldName = $(this).attr("data-field");
+          var type = $(this).attr("data-type");
+          var input = $("input[name='" + fieldName + "']");
+          var currentVal = parseInt(input.val());
+
+          if (!isNaN(currentVal)) {
+            if (type == "minus") {
+              if (currentVal > input.attr("min")) {
+                input.val(currentVal - 1).change();
+              }
+              if (parseInt(input.val()) == input.attr("min")) {
+                $(this).attr("disabled", true);
+              }
+            } else if (type == "plus") {
+              if (currentVal < input.attr("max")) {
+                input.val(currentVal + 1).change();
+              }
+              if (parseInt(input.val()) == input.attr("max")) {
+                $(this).attr("disabled", true);
+              }
+            }
+          } else {
+            input.val(0);
+          }
+        });
+
+        $(".input-number").focusin(function () {
+          $(this).data("oldValue", $(this).val());
+        });
+
+        $(".input-number").change(function () {
+          var minValue = parseInt($(this).attr("min"));
+          var maxValue = parseInt($(this).attr("max"));
+          var valueCurrent = parseInt($(this).val());
+
+          var name = $(this).attr("name");
+          if (valueCurrent >= minValue) {
+            $(
+              ".btn-number[data-type='minus'][data-field='" + name + "']"
+            ).removeAttr("disabled");
+          } else {
+            alert("Sorry, the minimum value was reached");
+            $(this).val($(this).data("oldValue"));
+          }
+          if (valueCurrent <= maxValue) {
+            $(
+              ".btn-number[data-type='plus'][data-field='" + name + "']"
+            ).removeAttr("disabled");
+          } else {
+            alert("Sorry, the maximum value was reached");
+            $(this).val($(this).data("oldValue"));
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+``` ### 2. Thêm phương thức vào `homeController` Tôi sẽ thêm một phương thức
+`productDetail` vào `homeController.java` để xử lý các yêu cầu đến
+`/product/{id}`. ```diff ---
+a/project/src/main/java/ecommerce/project/controller/homeController.java +++
+b/project/src/main/java/ecommerce/project/controller/homeController.java

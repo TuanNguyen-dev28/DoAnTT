@@ -275,3 +275,25 @@ ALTER TABLE `users_roles`
   ADD CONSTRAINT `FK2o0jvgh89lemvvo17cbqvdxaa` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `FKj6m8fwv7oqv74fcehir1a9ffy` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
 COMMIT;
+-- Cấu trúc bảng cho bảng `carts`
+CREATE TABLE `carts` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `total_price` double NOT NULL,
+  `total_items` int NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_9emv3bel0c3600a4s5h2idshn` (`user_id`),
+  CONSTRAINT `FKb5o626f86h46m4s7ms6ginnop` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Cấu trúc bảng cho bảng `cart_items`
+CREATE TABLE `cart_items` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `quantity` int NOT NULL,
+  `total_price` double NOT NULL,
+  `cart_id` bigint DEFAULT NULL,
+  `product_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `FK1uobyhgl1wvgt1jpccia8xxs3` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+  CONSTRAINT `FKpcttvq8xufnws4b9t2ds6v1i` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

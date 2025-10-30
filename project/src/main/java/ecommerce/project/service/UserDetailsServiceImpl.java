@@ -1,6 +1,6 @@
 package ecommerce.project.service;
 
-import ecommerce.project.model.User;
+import ecommerce.project.entity.User;
 import ecommerce.project.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
