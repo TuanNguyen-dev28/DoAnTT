@@ -466,6 +466,7 @@
 
     <nav
       class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center"
+      id="header-nav"
     >
       <div class="container-fluid">
         <div class="row justify-content-between align-items-center w-100">
@@ -512,7 +513,7 @@
                 ></button>
               </div>
 
-              <div class="offcanvas-body">
+              <div .08ss="offcanvas-body">
                 <ul
                   class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-md-5 pe-3"
                 >
@@ -567,48 +568,28 @@
                       aria-labelledby="dropdownShop"
                     >
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Sidebar
+                        <a th:href="@{/shop/accessories}" class="dropdown-item item-anchor"
+                          >Accessories
                         </a>
                       </li>
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Three Column
+                        <a th:href="@{/shop/clothes}" class="dropdown-item item-anchor"
+                          >Clothes
                         </a>
                       </li>
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Three Column Wide
+                        <a th:href="@{/shop/best-sellers}" class="dropdown-item item-anchor"
+                          >Best Sellers
                         </a>
                       </li>
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Four Column
+                        <a th:href="@{/shop/limited-edition}" class="dropdown-item item-anchor"
+                          >Limited Edition
                         </a>
                       </li>
                       <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Four Column Wide
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Six Column
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Shop Six Column Wide
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Single Product
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html" class="dropdown-item item-anchor"
-                          >Single Product V2
+                        <a th:href="@{/shop/new-arrivals}" class="dropdown-item item-anchor"
+                          >New Arrivals
                         </a>
                       </li>
                     </ul>
@@ -1275,12 +1256,13 @@
         </div>
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
           <div class="swiper-wrapper d-flex">
-            <div class="swiper-slide">
+            <!-- Loop through products -->
+            <div class="swiper-slide" th:each="product : ${newArrivals}">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder position-relative">
                   <a th:href="@{/}">
                     <img
-                      th:src="@{/images/product-item-1.jpg}"
+                      th:src="@{'/' + ${product.imageUrl}}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
@@ -1295,12 +1277,11 @@
                       <a th:href="@{/}">Dark florish onepiece</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
+                      ><span>$95.00</span></a
                     >
-                      <span>$95.00</span>
-                    </a>
                   </div>
                 </div>
               </div>
@@ -1328,9 +1309,8 @@
                       th:href="@{/}"
                       class="text-decoration-none"
                       data-after="Add to cart"
+                      ><span>$55.00</span></a
                     >
-                      <span>$55.00</span>
-                    </a>
                   </div>
                 </div>
               </div>
@@ -1355,12 +1335,11 @@
                       <a th:href="@{/}">Cotton off-white shirt</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
+                      ><span>$65.00</span></a
                     >
-                      <span>$65.00</span>
-                    </a>
                   </div>
                 </div>
               </div>
@@ -1385,12 +1364,11 @@
                       <a th:href="@{/}">Crop sweater</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
+                      ><span>$50.00</span></a
                     >
-                      <span>$50.00</span>
-                    </a>
                   </div>
                 </div>
               </div>
@@ -1415,9 +1393,10 @@
                       <a th:href="@{/}">Crop sweater</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
+                      ><span>$70.00</span></a
                     >
                       <span>$70.00</span>
                     </a>
