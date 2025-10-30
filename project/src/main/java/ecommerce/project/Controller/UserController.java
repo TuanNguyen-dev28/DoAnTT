@@ -1,8 +1,10 @@
 package ecommerce.project.controller;
 
+import ecommerce.project.entity.Cart;
 import ecommerce.project.entity.Role;
 import ecommerce.project.entity.User;
 import ecommerce.project.repository.RoleRepository;
+import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,12 +21,14 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, CartRepository cartRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cartRepository = cartRepository;
     }
 
     @GetMapping("/register")
@@ -57,6 +61,12 @@ public class UserController {
         user.getRoles().add(userRoleOpt.get());
 
         userRepository.save(user);
+
+        // Tạo giỏ hàng mới cho người dùng
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cartRepository.save(cart);
+
         return "redirect:/login?register_success";
     }
 

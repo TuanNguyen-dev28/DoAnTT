@@ -147,6 +147,33 @@ INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES
 (1, 1),
 (2, 2);
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `carts`
+--
+
+CREATE TABLE `carts` (
+  `id` bigint NOT NULL,
+  `total_price` double NOT NULL,
+  `total_items` int NOT NULL,
+  `user_id` bigint DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `cart_items`
+--
+
+CREATE TABLE `cart_items` (
+  `id` bigint NOT NULL,
+  `quantity` int NOT NULL,
+  `total_price` double NOT NULL,
+  `cart_id` bigint DEFAULT NULL,
+  `product_id` bigint DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Chỉ mục cho các bảng đã đổ
 --
@@ -155,6 +182,19 @@ INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES
 -- Chỉ mục cho bảng `product`
 --
 ALTER TABLE `product`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `carts`
+--
+ALTER TABLE `carts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_9emv3bel0c3600a4s5h2idshn` (`user_id`);
+
+--
+-- Chỉ mục cho bảng `cart_items`
+--
+ALTER TABLE `cart_items`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -189,6 +229,18 @@ ALTER TABLE `product`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
+-- AUTO_INCREMENT cho bảng `carts`
+--
+ALTER TABLE `carts`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT cho bảng `cart_items`
+--
+ALTER TABLE `cart_items`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
 -- AUTO_INCREMENT cho bảng `roles`
 --
 ALTER TABLE `roles`
@@ -204,6 +256,18 @@ ALTER TABLE `users`
 -- Các ràng buộc cho các bảng đã đổ
 --
 
+--
+-- Các ràng buộc cho bảng `carts`
+--
+ALTER TABLE `carts`
+  ADD CONSTRAINT `FKb5o626f86h46m4s7ms6ginnop` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Các ràng buộc cho bảng `cart_items`
+--
+ALTER TABLE `cart_items`
+  ADD CONSTRAINT `FK1uobyhgl1wvgt1jpccia8xxs3` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+  ADD CONSTRAINT `FKpcttvq8xufnws4b9t2ds6v1i` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`);
 --
 -- Các ràng buộc cho bảng `users_roles`
 --
