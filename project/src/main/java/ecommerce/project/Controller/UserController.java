@@ -1,9 +1,9 @@
 package ecommerce.project.controller;
 
-import ecommerce.project.entity.Cart;
-import ecommerce.project.entity.Role;
-import ecommerce.project.entity.User;
 import ecommerce.project.repository.RoleRepository;
+import ecommerce.project.model.Cart;
+import ecommerce.project.model.Role;
+import ecommerce.project.model.User;
 import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
