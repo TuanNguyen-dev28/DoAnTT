@@ -509,11 +509,11 @@
                 ></button>
               </div>
 
-              <div .08ss="offcanvas-body">
+              <div class="offcanvas-body">
                 <ul
                   class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-md-5 pe-3"
                 >
-                  <li class="nav-item dropdown">
+                  <li class="nav-item dropdown position-relative">
                     <a
                       class="nav-link dropdown-toggle active"
                       href="#"
@@ -549,7 +549,7 @@
                       </li>
                     </ul>
                   </li>
-                  <li class="nav-item dropdown">
+                  <li class="nav-item dropdown position-relative">
                     <a
                       class="nav-link dropdown-toggle"
                       href="#"
@@ -590,7 +590,7 @@
                       </li>
                     </ul>
                   </li>
-                  <li class="nav-item dropdown">
+                  <li class="nav-item dropdown position-relative">
                     <a
                       class="nav-link dropdown-toggle"
                       href="#"
@@ -641,7 +641,7 @@
                       </li>
                     </ul>
                   </li>
-                  <li class="nav-item dropdown">
+                  <li class="nav-item dropdown position-relative">
                     <a
                       class="nav-link dropdown-toggle"
                       href="#"
@@ -1160,23 +1160,21 @@
             <div class="swiper-slide" th:each="product : ${newArrivals}">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder position-relative">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/{id}(id=${product.id})}">
                     <img
                       th:src="@{'/' + ${product.imageUrl}}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="element-title text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}" th:text="${product.name}"
-                        >Product Name</a
-                      >
+                      <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.name}">Product Name</a>
                     </h5>
                     <a
                       href="#"
@@ -1191,6 +1189,8 @@
                 </div>
               </div>
             </div>
+            <!-- Best Sellers section might also need changes if you add it -->
+            <!-- You May Also Like section might also need changes if you add it -->
           </div>
           <div class="swiper-pagination"></div>
         </div>
@@ -1263,24 +1263,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/1}">
                     <img
                       th:src="@{/images/product-item-4.jpg}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Dark florish onepiece</a>
+                      <a th:href="@{/product/1}">Dark florish onepiece</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$95.00</span></a
@@ -1292,24 +1292,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/2}">
                     <img
                       th:src="@{/images/product-item-3.jpg}"
                       alt="product"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Baggy Shirt</a>
+                      <a th:href="@{/product/2}">Baggy Shirt</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$55.00</span></a
@@ -1321,24 +1321,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/3}">
                     <img
                       th:src="@{/images/product-item-5.jpg}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Cotton off-white shirt</a>
+                      <a th:href="@{/product/3}">Cotton off-white shirt</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$65.00</span></a
@@ -1350,24 +1350,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/4}">
                     <img
                       th:src="@{/images/product-item-6.jpg}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Handmade crop sweater</a>
+                      <a th:href="@{/product/4}">Handmade crop sweater</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$50.00</span></a
@@ -1379,24 +1379,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/5}">
                     <img
                       th:src="@{/images/product-item-9.jpg}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Dark florish onepiece</a>
+                      <a th:href="@{/product/5}">Dark florish onepiece</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$70.00</span></a
@@ -1408,24 +1408,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/6}">
                     <img
                       th:src="@{/images/product-item-10.jpg}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Cotton off-white shirt</a>
+                      <a th:href="@{/product/6}">Cotton off-white shirt</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$70.00</span></a
@@ -1554,24 +1554,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/7}">
                     <img
                       th:src="@{/images/product-item-5.jpg}"
                       alt="product"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Dark florish onepiece</a>
+                      <a th:href="@{/product/7}">Dark florish onepiece</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$95.00</span></a
@@ -1583,24 +1583,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/8}">
                     <img
                       th:src="@{/images/product-item-6.jpg}"
                       alt="product"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Baggy Shirt</a>
+                      <a th:href="@{/product/8}">Baggy Shirt</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$55.00</span></a
@@ -1612,24 +1612,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/9}">
                     <img
                       th:src="@{/images/product-item-7.jpg}"
                       alt="product"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Cotton off-white shirt</a>
+                      <a th:href="@{/product/9}">Cotton off-white shirt</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$65.00</span></a
@@ -1641,24 +1641,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/10}">
                     <img
                       th:src="@{/images/product-item-8.jpg}"
                       alt="product"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Handmade crop sweater</a>
+                      <a th:href="@{/product/10}">Handmade crop sweater</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$50.00</span></a
@@ -1670,24 +1670,24 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/product/11}">
                     <img
                       th:src="@{/images/product-item-1.jpg}"
                       alt="product"
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a th:href="@{/}" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
                   </a>
                   <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Handmade crop sweater</a>
+                      <a th:href="@{/product/11}">Handmade crop sweater</a>
                     </h5>
                     <a
-                      th:href="@{/}"
+                      href="#"
                       class="text-decoration-none"
                       data-after="Add to cart"
                       ><span>$70.00</span></a

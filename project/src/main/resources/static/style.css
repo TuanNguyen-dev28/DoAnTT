@@ -151,6 +151,9 @@ a {
 .dropdown-menu {
   --bs-dropdown-border-radius: 0;
   --bs-dropdown-border-width: 0;
+  position: absolute;
+  z-index: 1000;
+  background-color: #fff;
 }
 
 .dropdown-item {
