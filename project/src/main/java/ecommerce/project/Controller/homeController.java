@@ -19,20 +19,18 @@ public class homeController {
     public String home(Model model) {
         // Lấy tất cả sản phẩm từ database
         List<Product> newArrivals = productRepository.findAll();
-
-        // Để demo, nếu database trống, chúng ta sẽ thêm một vài sản phẩm mẫu
-        if (newArrivals.isEmpty()) {
-            productRepository.save(new Product("Dark florish onepiece", 95.00, "images/product-item-1.jpg"));
-            productRepository.save(new Product("Baggy Shirt", 55.00, "images/product-item-2.jpg"));
-            productRepository.save(new Product("Cotton off-white shirt", 65.00, "images/product-item-3.jpg"));
-            productRepository.save(new Product("Crop sweater", 50.00, "images/product-item-4.jpg"));
-            newArrivals = productRepository.findAll();
-        }
-
         // Thêm danh sách sản phẩm vào model để Thymeleaf có thể truy cập
         model.addAttribute("newArrivals", newArrivals);
 
         return "index"; // Trả về file index.html trong thư mục templates
+    }
+
+    @GetMapping("/shop/shop-for-woman")
+    public String shopForWoman(Model model) {
+        // Lấy các sản phẩm dành cho nữ từ database
+        List<Product> womenProducts = productRepository.findWomenProducts();
+        model.addAttribute("products", womenProducts);
+        return "shop_for_woman"; // Trả về file shop_for_woman.html
     }
 
     @GetMapping("/shop/shop-for-men")
@@ -41,6 +39,15 @@ public class homeController {
         List<Product> menProducts = productRepository.findMenProducts();
         model.addAttribute("products", menProducts);
         return "shop_for_men"; // Trả về file shop_for_men.html
+    }
+
+    @GetMapping("/blog")
+    public String blog(Model model) {
+        model.addAttribute("springProducts", productRepository.findBySeason("Spring"));
+        model.addAttribute("summerProducts", productRepository.findBySeason("Summer"));
+        model.addAttribute("autumnProducts", productRepository.findBySeason("Autumn"));
+        model.addAttribute("winterProducts", productRepository.findBySeason("Winter"));
+        return "blog"; // Trả về file blog.html
     }
 
 }

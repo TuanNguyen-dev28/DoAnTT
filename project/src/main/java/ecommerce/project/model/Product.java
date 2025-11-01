@@ -16,6 +16,8 @@ public class Product {
     private double price;
     private String imageUrl;
 
+    private String season;
+
     // Constructors
     public Product() {
     }
@@ -25,6 +27,14 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
     }
+
+    public Product(String name, double price, String imageUrl, String season) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.season = season;
+    }
+
 
     // Getters and Setters
     public Long getId() {
@@ -58,6 +68,12 @@ public class Product {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
 }
-
-

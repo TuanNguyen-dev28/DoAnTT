@@ -718,7 +718,7 @@
                     </ul>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Blog</a>
+                    <a class="nav-link" th:href="@{/blog}">Blog</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
@@ -1091,7 +1091,7 @@
             <div class="col-md-4">
               <div class="cat-item image-zoom-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/shop/shop-for-men}">
                     <img
                       th:src="@{/images/cat-item1.jpg}"
                       alt="categories"
@@ -1101,7 +1101,7 @@
                 </div>
                 <div class="category-content">
                   <div class="product-button">
-                    <a th:href="@{/}" class="btn btn-common text-uppercase"
+                    <a th:href="@{/shop/shop-for-men}" class="btn btn-common text-uppercase"
                       >Shop for men</a
                     >
                   </div>
@@ -1111,7 +1111,7 @@
             <div class="col-md-4">
               <div class="cat-item image-zoom-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
+                  <a th:href="@{/shop/shop-for-woman}">
                     <img
                       th:src="@{/images/cat-item2.jpg}"
                       alt="categories"
@@ -1121,7 +1121,7 @@
                 </div>
                 <div class="category-content">
                   <div class="product-button">
-                    <a th:href="@{/}" class="btn btn-common text-uppercase"
+                    <a th:href="@{/shop/shop-for-woman}" class="btn btn-common text-uppercase"
                       >Shop for women</a
                     >
                   </div>
@@ -1270,12 +1270,12 @@
         </div>
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
           <div class="swiper-wrapper d-flex">
-            <div class="swiper-slide">
+            <div class="swiper-slide" th:each="product : ${bestSellers}">
               <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
+                <div class="image-holder position-relative">
                   <a th:href="@{/}">
                     <img
-                      th:src="@{/images/product-item-4.jpg}"
+                      th:src="@{'/' + ${product.imageUrl}}"
                       alt="categories"
                       class="product-image img-fluid"
                     />
@@ -1286,14 +1286,13 @@
                     </svg>
                   </a>
                   <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Dark florish onepiece</a>
+                    <h5 class="element-title text-uppercase fs-5 mt-3">
+                      <a th:href="@{/}" th:text="${product.name}">Product Name</a>
                     </h5>
                     <a
                       th:href="@{/}"
                       class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$95.00</span></a
+                      data-after="Add to cart" ><span th:text="${'$' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">$0.00</span></a
                     >
                   </div>
                 </div>
@@ -1301,7 +1300,7 @@
             </div>
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
+                <div class="image-holder position-relative">
                   <a th:href="@{/}">
                     <img
                       th:src="@{/images/product-item-3.jpg}"
@@ -1331,13 +1330,7 @@
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
                 <div class="image-holder">
-                  <a th:href="@{/}">
-                    <img
-                      th:src="@{/images/product-item-5.jpg}"
-                      alt="categories"
-                      class="product-image img-fluid"
-                    />
-                  </a>
+                  <a th:href="@{/}"><img th:src="@{/images/product-item-5.jpg}" alt="categories" class="product-image img-fluid" /></a>
                   <a th:href="@{/}" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
@@ -1350,8 +1343,7 @@
                     <a
                       th:href="@{/}"
                       class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$65.00</span></a
+                      data-after="Add to cart"><span>$65.00</span></a>
                     >
                   </div>
                 </div>
@@ -1561,12 +1553,12 @@
         </div>
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
           <div class="swiper-wrapper d-flex">
-            <div class="swiper-slide">
+            <div class="swiper-slide" th:each="product : ${youMayLike}">
               <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
+                <div class="image-holder position-relative">
                   <a th:href="@{/}">
                     <img
-                      th:src="@{/images/product-item-5.jpg}"
+                      th:src="@{'/' + ${product.imageUrl}}"
                       alt="product"
                       class="product-image img-fluid"
                     />
@@ -1577,14 +1569,13 @@
                     </svg>
                   </a>
                   <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a th:href="@{/}">Dark florish onepiece</a>
+                    <h5 class="element-title text-uppercase fs-5 mt-3">
+                      <a th:href="@{/}" th:text="${product.name}">Product Name</a>
                     </h5>
                     <a
                       th:href="@{/}"
                       class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$95.00</span></a
+                      data-after="Add to cart"><span th:text="${'$' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">$0.00</span></a>
                     >
                   </div>
                 </div>
@@ -1592,13 +1583,9 @@
             </div>
             <div class="swiper-slide">
               <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
+                <div class="image-holder position-relative">
                   <a th:href="@{/}">
-                    <img
-                      th:src="@{/images/product-item-6.jpg}"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
+                    <img th:src="@{/images/product-item-6.jpg}" alt="product" class="product-image img-fluid" />
                   </a>
                   <a th:href="@{/}" class="btn-icon btn-wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24">
@@ -1612,8 +1599,7 @@
                     <a
                       th:href="@{/}"
                       class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$55.00</span></a
+                      data-after="Add to cart"><span>$55.00</span></a>
                     >
                   </div>
                 </div>
@@ -1728,7 +1714,7 @@
           class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3"
         >
           <h4 class="text-uppercase">Read Blog Posts</h4>
-          <a th:href="@{/}" class="btn-link">View All</a>
+          <a th:href="@{/blog}" class="btn-link">View All</a>
         </div>
         <div class="row">
           <div class="col-md-4">
