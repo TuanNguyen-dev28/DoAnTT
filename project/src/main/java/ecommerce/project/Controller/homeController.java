@@ -35,4 +35,12 @@ public class homeController {
         return "index"; // Trả về file index.html trong thư mục templates
     }
 
+    @GetMapping("/shop/shop-for-men")
+    public String shopForMen(Model model) {
+        // Lấy các sản phẩm dành cho nam từ database
+        List<Product> menProducts = productRepository.findMenProducts();
+        model.addAttribute("products", menProducts);
+        return "shop_for_men"; // Trả về file shop_for_men.html
+    }
+
 }
