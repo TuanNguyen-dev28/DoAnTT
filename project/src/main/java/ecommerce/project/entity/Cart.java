@@ -2,6 +2,7 @@ package ecommerce.project.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class Cart {
 
     private int totalItems;
 
-    private double totalPrice;
+    private BigDecimal totalPrice;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -48,11 +49,11 @@ public class Cart {
         this.totalItems = totalItems;
     }
 
-    public double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 

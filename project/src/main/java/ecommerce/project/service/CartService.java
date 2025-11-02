@@ -5,10 +5,9 @@ import ecommerce.project.entity.Product;
 import ecommerce.project.entity.User;
 
 public interface CartService {
-    Cart addItemToCart(Product product, int quantity, String username);
+    Cart themSanPhamVaoGio(Product sanPham, int soLuong, String tenNguoiDung);
 
-    Cart updateCart(Product product, int quantity, String username);
+    Cart capNhatGioHang(Product sanPham, int soLuong, String tenNguoiDung);
 
-    void deleteItemFromCart(Long id, String username);
+    void xoaMucKhoiGioHang(Long id, String tenNguoiDung);
 }
-

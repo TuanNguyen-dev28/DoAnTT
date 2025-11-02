@@ -11,6 +11,7 @@ import ecommerce.project.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,84 +28,99 @@ public class CartServiceImpl implements CartService {
     private UserRepository userRepository;
 
     @Override
-    public Cart addItemToCart(Product product, int quantity, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart = cartRepository.findByUser_Id(user.getId());
+    public Cart themSanPhamVaoGio(Product sanPham, int soLuong, String tenNguoiDung) {
+        User nguoiDung = userRepository.findByUsername(tenNguoiDung).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        Cart gioHang = cartRepository.findByUser_Id(nguoiDung.getId());
 
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
+        if (gioHang == null) {
+            gioHang = new Cart();
+            gioHang.setUser(nguoiDung);
         }
 
-        Set<CartItem> cartItems = cart.getCartItems();
-        CartItem cartItem = findCartItem(cartItems, product.getId());
+        Set<CartItem> cacMucGioHang = gioHang.getCartItems();
+        CartItem mucGioHang = timMucGioHang(cacMucGioHang, sanPham.getId());
 
-        if (cartItems == null) {
-            cartItems = new HashSet<>();
+        if (cacMucGioHang == null) {
+            cacMucGioHang = new HashSet<>();
+            gioHang.setCartItems(cacMucGioHang);
         }
 
-        if (cartItem == null) {
-            cartItem = new CartItem();
-            cartItem.setProduct(product);
-            cartItem.setCart(cart);
-            cartItem.setQuantity(quantity);
-            cartItem.setTotalPrice(quantity * product.getPrice());
-            cartItems.add(cartItem);
+        mucGioHang = timMucGioHang(cacMucGioHang, sanPham.getId());
+
+        if (mucGioHang == null) {
+            mucGioHang = new CartItem();
+            mucGioHang.setProduct(sanPham);
+            mucGioHang.setCart(gioHang);
+            mucGioHang.setQuantity(soLuong);
+            mucGioHang.setTotalPrice(sanPham.getPrice().multiply(BigDecimal.valueOf(soLuong)));
+            cacMucGioHang.add(mucGioHang);
         } else {
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-            cartItem.setTotalPrice(cartItem.getTotalPrice() + (quantity * product.getPrice()));
+            mucGioHang.setQuantity(mucGioHang.getQuantity() + soLuong);
+            BigDecimal newTotalPrice = mucGioHang.getTotalPrice().add(sanPham.getPrice().multiply(BigDecimal.valueOf(soLuong)));
+            mucGioHang.setTotalPrice(newTotalPrice);
         }
-        cart.setCartItems(cartItems);
+        gioHang.setCartItems(cacMucGioHang);
 
-        cart.setTotalItems(cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-        cart.setTotalPrice(cart.getCartItems().stream().mapToDouble(CartItem::getTotalPrice).sum());
+        gioHang.setTotalItems(gioHang.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
+        gioHang.setTotalPrice(
+                gioHang.getCartItems().stream()
+                        .map(CartItem::getTotalPrice)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-        return cartRepository.save(cart);
+        return cartRepository.save(gioHang);
     }
 
     @Override
-    public Cart updateCart(Product product, int quantity, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart = cartRepository.findByUser_Id(user.getId());
+    public Cart capNhatGioHang(Product sanPham, int soLuong, String tenNguoiDung) {
+        User nguoiDung = userRepository.findByUsername(tenNguoiDung).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        Cart gioHang = cartRepository.findByUser_Id(nguoiDung.getId());
 
-        Set<CartItem> cartItems = cart.getCartItems();
-        CartItem item = findCartItem(cartItems, product.getId());
+        Set<CartItem> cacMucGioHang = gioHang.getCartItems();
+        CartItem muc = timMucGioHang(cacMucGioHang, sanPham.getId());
 
-        if (item != null) {
-            item.setQuantity(quantity);
-            item.setTotalPrice(quantity * product.getPrice());
-            itemRepository.save(item);
+        if (muc != null) {
+            muc.setQuantity(soLuong);
+            muc.setTotalPrice(sanPham.getPrice().multiply(BigDecimal.valueOf(soLuong)));
+            itemRepository.save(muc);
 
-            cart.setTotalItems(cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-            cart.setTotalPrice(cart.getCartItems().stream().mapToDouble(CartItem::getTotalPrice).sum());
+            gioHang.setTotalItems(gioHang.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
+            gioHang.setTotalPrice(
+                    gioHang.getCartItems().stream()
+                            .map(CartItem::getTotalPrice)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            );
         }
 
-        return cartRepository.save(cart);
+        return cartRepository.save(gioHang);
     }
 
     @Override
-    public void deleteItemFromCart(Long id, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        Cart cart = cartRepository.findByUser_Id(user.getId());
+    public void xoaMucKhoiGioHang(Long id, String tenNguoiDung) {
+        User nguoiDung = userRepository.findByUsername(tenNguoiDung).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        Cart gioHang = cartRepository.findByUser_Id(nguoiDung.getId());
 
-        Set<CartItem> cartItems = cart.getCartItems();
-        CartItem item = cartItems.stream().filter(i -> i.getId().equals(id)).findFirst().orElse(null);
+        Set<CartItem> cacMucGioHang = gioHang.getCartItems();
+        CartItem muc = cacMucGioHang.stream().filter(i -> i.getId().equals(id)).findFirst().orElse(null);
 
-        if (item != null) {
-            cartItems.remove(item);
-            itemRepository.delete(item);
-            cart.setTotalItems(cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-            cart.setTotalPrice(cart.getCartItems().stream().mapToDouble(CartItem::getTotalPrice).sum());
-            cartRepository.save(cart);
+        if (muc != null) {
+            cacMucGioHang.remove(muc);
+            itemRepository.delete(muc);
+            gioHang.setTotalItems(gioHang.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
+            gioHang.setTotalPrice(
+                    gioHang.getCartItems().stream()
+                            .map(CartItem::getTotalPrice)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            );
+            cartRepository.save(gioHang);
         }
     }
 
-    private CartItem findCartItem(Set<CartItem> cartItems, Long productId) {
-        if (cartItems == null) {
+    private CartItem timMucGioHang(Set<CartItem> cacMucGioHang, Long sanPhamId) {
+        if (cacMucGioHang == null) {
             return null;
         }
-        return cartItems.stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+        return cacMucGioHang.stream()
+                .filter(muc -> muc.getProduct().getId().equals(sanPhamId))
                 .findFirst()
                 .orElse(null);
     }

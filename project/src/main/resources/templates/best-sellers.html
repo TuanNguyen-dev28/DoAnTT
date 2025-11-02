@@ -52,9 +52,9 @@
               class="product-item image-zoom-effect link-effect d-flex flex-column h-100"
             >
               <div class="image-holder position-relative">
-                <a th:href="@{/product/{id}(id=${product.id})}">
+                <a th:href="@{/product/{id}(id=${p.id})}">
                   <img
-                    th:src="@{'/' + ${product.imageUrl}}"
+                    th:src="@{'/' + ${p.imageUrl}}"
                     alt="product"
                     class="product-image img-fluid"
                   />
@@ -75,11 +75,11 @@
                 </h5>
                 <div class="product-price">
                   <a
-                    th:href="@{/product/{id}(id=${product.id})}"
+                    th:href="@{/product/{id}(id=${p.id})}"
                     class="text-decoration-none"
                     data-after="Add to cart"
                     ><span
-                      th:text="${'$' + #numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}"
+                      th:text="${'$' + #numbers.formatDecimal(p.price, 1, 'COMMA', 2, 'POINT')}"
                       >$0.00</span
                     ></a
                   >

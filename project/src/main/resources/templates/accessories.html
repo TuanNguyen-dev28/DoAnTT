@@ -52,9 +52,9 @@
               class="product-item image-zoom-effect link-effect d-flex flex-column h-100"
             >
               <div class="image-holder position-relative">
-                <a th:href="@{/product/{id}(id=${product.id})}">
+                <a th:href="@{/product/{id}(id=${p.id})}">
                   <img
-                    th:src="@{'/' + ${product.imageUrl}}"
+                    th:src="@{'/' + ${p.imageUrl}}"
                     alt="product"
                     class="product-image img-fluid"
                   />

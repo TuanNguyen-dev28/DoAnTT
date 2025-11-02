@@ -2,6 +2,8 @@ package ecommerce.project.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "cart_items")
 public class CartItem {
@@ -10,7 +12,7 @@ public class CartItem {
     private Long id;
 
     private int quantity;
-    private double totalPrice;
+    private BigDecimal totalPrice;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
@@ -42,11 +44,11 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
