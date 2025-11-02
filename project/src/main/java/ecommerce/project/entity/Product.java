@@ -1,6 +1,7 @@
 package ecommerce.project.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product")
@@ -11,12 +12,21 @@ public class Product {
     private Long id;
 
     private String name;
-    private double price;
+    private BigDecimal price;
     private String imageUrl;
     private String category;
     private boolean isBestSeller;
     private boolean isNewArrival;
     private boolean isLimitedEdition;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private String material;
+    private String color;
+    private String availableSizes;
+    private int stockQuantity;
+    private BigDecimal rating;
 
     // Getters và Setters
     public Long getId() {
@@ -35,11 +45,11 @@ public class Product {
         this.name = name;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -81,5 +91,53 @@ public class Product {
 
     public void setLimitedEdition(boolean limitedEdition) {
         isLimitedEdition = limitedEdition;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getAvailableSizes() {
+        return availableSizes;
+    }
+
+    public void setAvailableSizes(String availableSizes) {
+        this.availableSizes = availableSizes;
+    }
+
+    public int getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
+
+    public BigDecimal getRating() {
+        return rating;
+    }
+
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
     }
 }
