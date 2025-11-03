@@ -17,6 +17,7 @@ CREATE TABLE `product` (
   `material` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `color` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `available_sizes` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `season` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -27,15 +28,15 @@ CREATE TABLE `product` (
 TRUNCATE TABLE `product`;
 
 -- Thêm dữ liệu mới với đầy đủ các cột
-INSERT INTO `product` (`id`, `name`, `price`, `image_url`, `description`, `category`, `stock_quantity`, `rating`, `is_new_arrival`, `is_best_seller`, `is_limited_edition`, `material`, `color`, `available_sizes`) VALUES
-(1, 'Dark Florish Onepiece', 95.00, 'images/product-item-1.jpg', 'A beautiful dark florish onepiece, perfect for any occasion.', 'clothes', 50, 4.50, b'1', b'1', b'0', 'Polyester', 'Black', 'S,M,L'),
-(2, 'Baggy Shirt', 55.00, 'images/product-item-2.jpg', 'A comfortable and stylish baggy shirt.', 'clothes', 100, 4.20, b'1', b'0', b'0', 'Cotton', 'White', 'M,L,XL'),
-(3, 'Cotton Off-white Shirt', 65.00, 'images/product-item-3.jpg', 'A classic off-white shirt made from pure cotton.', 'clothes', 80, 4.80, b'0', b'1', b'0', 'Cotton', 'Off-white', 'S,M,L'),
-(4, 'Crop Sweater', 50.00, 'images/product-item-4.jpg', 'A trendy crop sweater for a modern look.', 'clothes', 120, 4.00, b'1', b'0', b'0', 'Wool', 'Gray', 'S,M'),
-(5, 'Leather Handbag', 120.00, 'images/product-item-5.jpg', 'A stylish leather handbag for everyday use.', 'accessories', 30, 4.90, b'0', b'1', b'1', 'Leather', 'Brown', NULL),
-(6, 'Handmade Crop Sweater', 70.00, 'images/product-item-6.jpg', 'A unique handmade crop sweater.', 'clothes', 40, 4.60, b'1', b'0', b'1', 'Wool', 'Beige', 'S,M,L'),
-(7, 'Silver Necklace', 85.00, 'images/product-item-7.jpg', 'An elegant silver necklace with a unique pendant.', 'accessories', 60, 4.70, b'0', b'0', b'0', 'Silver', 'Silver', NULL),
-(8, 'Stylish Sunglasses', 45.00, 'images/product-item-8.jpg', 'Protect your eyes with these stylish sunglasses.', 'accessories', 150, 4.30, b'1', b'0', b'0', 'Plastic', 'Black', NULL);
+INSERT INTO `product` (`id`, `name`, `price`, `image_url`, `description`, `category`, `stock_quantity`, `rating`, `is_new_arrival`, `is_best_seller`, `is_limited_edition`, `material`, `color`, `available_sizes`, `season`) VALUES
+(1, 'Dark Florish Onepiece', 95.00, 'images/product-item-1.jpg', 'A beautiful dark florish onepiece, perfect for any occasion.', 'clothes', 50, 4.50, b'1', b'1', b'0', 'Polyester', 'Black', 'S,M,L', 'Summer'),
+(2, 'Baggy Shirt', 55.00, 'images/product-item-2.jpg', 'A comfortable and stylish baggy shirt.', 'clothes', 100, 4.20, b'1', b'0', b'0', 'Cotton', 'White', 'M,L,XL', 'Spring'),
+(3, 'Cotton Off-white Shirt', 65.00, 'images/product-item-3.jpg', 'A classic off-white shirt made from pure cotton.', 'clothes', 80, 4.80, b'0', b'1', b'0', 'Cotton', 'Off-white', 'S,M,L', 'All'),
+(4, 'Crop Sweater', 50.00, 'images/product-item-4.jpg', 'A trendy crop sweater for a modern look.', 'clothes', 120, 4.00, b'1', b'0', b'0', 'Wool', 'Gray', 'S,M', 'Autumn'),
+(5, 'Leather Handbag', 120.00, 'images/product-item-5.jpg', 'A stylish leather handbag for everyday use.', 'accessories', 30, 4.90, b'0', b'1', b'1', 'Leather', 'Brown', NULL, 'All'),
+(6, 'Handmade Crop Sweater', 70.00, 'images/product-item-6.jpg', 'A unique handmade crop sweater.', 'clothes', 40, 4.60, b'1', b'0', b'1', 'Wool', 'Beige', 'S,M,L', 'Winter'),
+(7, 'Silver Necklace', 85.00, 'images/product-item-7.jpg', 'An elegant silver necklace with a unique pendant.', 'accessories', 60, 4.70, b'0', b'0', b'0', 'Silver', 'Silver', NULL, 'All'),
+(8, 'Stylish Sunglasses', 45.00, 'images/product-item-8.jpg', 'Protect your eyes with these stylish sunglasses.', 'accessories', 150, 4.30, b'1', b'0', b'0', 'Plastic', 'Black', NULL, 'Summer');
 
 -- --------------------------------------------------------
 

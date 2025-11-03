@@ -72,9 +72,10 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @RequestMapping(value = "/delete-from-cart/{id}", method = {RequestMethod.GET, RequestMethod.POST})
-    public String deleteItem(@PathVariable("id") Long id, Principal principal) {
+    @PostMapping("/delete-from-cart/{id}")
+    public String deleteItem(@PathVariable("id") Long id, Principal principal, RedirectAttributes redirectAttributes) {
         cartService.xoaMucKhoiGioHang(id, principal.getName());
+        redirectAttributes.addFlashAttribute("success", "Item removed from cart.");
         return "redirect:/cart";
     }
 }

@@ -26,6 +26,7 @@ public class Product {
     private String color;
     private String availableSizes;
     private int stockQuantity;
+    private String season;
     private BigDecimal rating;
 
     // Getters và Setters
@@ -139,5 +140,13 @@ public class Product {
 
     public void setRating(BigDecimal rating) {
         this.rating = rating;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
     }
 }

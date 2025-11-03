@@ -61,13 +61,7 @@ public class CartServiceImpl implements CartService {
         }
         gioHang.setCartItems(cacMucGioHang);
 
-        gioHang.setTotalItems(gioHang.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-        gioHang.setTotalPrice(
-                gioHang.getCartItems().stream()
-                        .map(CartItem::getTotalPrice)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-
-        return cartRepository.save(gioHang);
+        return updateCartTotals(gioHang);
     }
 
     @Override
@@ -83,15 +77,9 @@ public class CartServiceImpl implements CartService {
             muc.setTotalPrice(sanPham.getPrice().multiply(BigDecimal.valueOf(soLuong)));
             itemRepository.save(muc);
 
-            gioHang.setTotalItems(gioHang.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-            gioHang.setTotalPrice(
-                    gioHang.getCartItems().stream()
-                            .map(CartItem::getTotalPrice)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
+            updateCartTotals(gioHang);
         }
-
-        return cartRepository.save(gioHang);
+        return gioHang;
     }
 
     @Override
@@ -105,13 +93,7 @@ public class CartServiceImpl implements CartService {
         if (muc != null) {
             cacMucGioHang.remove(muc);
             itemRepository.delete(muc);
-            gioHang.setTotalItems(gioHang.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-            gioHang.setTotalPrice(
-                    gioHang.getCartItems().stream()
-                            .map(CartItem::getTotalPrice)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add)
-            );
-            cartRepository.save(gioHang);
+            updateCartTotals(gioHang);
         }
     }
 
@@ -123,5 +105,15 @@ public class CartServiceImpl implements CartService {
                 .filter(muc -> muc.getProduct().getId().equals(sanPhamId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private Cart updateCartTotals(Cart cart) {
+        int totalItems = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
+        BigDecimal totalPrice = cart.getCartItems().stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        cart.setTotalItems(totalItems);
+        cart.setTotalPrice(totalPrice);
+        return cartRepository.save(cart);
     }
 }
