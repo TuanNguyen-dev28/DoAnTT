@@ -35,7 +35,7 @@
   </head>
   <body>
     <!-- Header -->
-    <div th:replace="~{index :: #header-nav}"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
 
     <section class="hero-section position-relative jarallax">
       <img
@@ -77,7 +77,11 @@
           </div>
           <div class="col-lg-6 col-md-12 p-0">
             <div class="contact-information">
-              <form action="#" method="post" class="contact-form">
+              <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+              <form th:action="@{/contact/submit}" method="post" class="contact-form">
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <input
@@ -93,6 +97,15 @@
                       type="email"
                       name="email"
                       placeholder="E-mail"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-12 mb-3">
+                    <input
+                      type="text"
+                      name="subject"
+                      placeholder="Subject"
                       class="form-control"
                       required
                     />
@@ -137,7 +150,7 @@
     </section>
 
     <!-- Footer -->
-    <div th:insert="~{index :: #footer}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/plugins.js}"></script>

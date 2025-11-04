@@ -1,13 +1,27 @@
 package ecommerce.project.controller;
 
+import ecommerce.project.entity.About;
+import ecommerce.project.entity.Contact;
+import ecommerce.project.entity.ContactInfo;
 import ecommerce.project.entity.Order;
 import ecommerce.project.entity.Product;
 import ecommerce.project.entity.User;
+import ecommerce.project.repository.AboutRepository;
+import ecommerce.project.repository.ContactInfoRepository;
+import ecommerce.project.repository.ContactRepository;
 import ecommerce.project.repository.OrderRepository;
 import ecommerce.project.repository.ProductRepository;
 import ecommerce.project.repository.UserRepository;
 import ecommerce.project.service.OrderService;
 import ecommerce.project.service.ProductService;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +64,17 @@ public class AdminController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
+    private AboutRepository aboutRepository;
+
+    @Autowired
+    private ContactInfoRepository contactInfoRepository;
+
+    private static final String UPLOAD_DIR = "src/main/resources/static/images/";
+
     // ==================== DASHBOARD ====================
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -58,10 +83,30 @@ public class AdminController {
         long totalOrders = orderRepository.count();
         List<Order> recentOrders = orderRepository.findAllByOrderByOrderDateDesc()
                 .stream().limit(5).toList();
+        
+        // Calculate total revenue from all orders
+        BigDecimal totalRevenue = orderRepository.findAll().stream()
+                .map(Order::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        // Count orders by status
+        long pendingOrders = orderRepository.findAll().stream()
+                .filter(o -> o.getStatus() == Order.OrderStatus.PENDING)
+                .count();
+        long deliveredOrders = orderRepository.findAll().stream()
+                .filter(o -> o.getStatus() == Order.OrderStatus.DELIVERED)
+                .count();
+        
+        // Count unread contacts
+        long unreadContacts = contactRepository.countByIsReadFalse();
 
         model.addAttribute("totalProducts", totalProducts);
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalOrders", totalOrders);
+        model.addAttribute("totalRevenue", totalRevenue);
+        model.addAttribute("pendingOrders", pendingOrders);
+        model.addAttribute("deliveredOrders", deliveredOrders);
+        model.addAttribute("unreadContacts", unreadContacts);
         model.addAttribute("recentOrders", recentOrders);
         return "admin/dashboard";
     }
@@ -96,7 +141,49 @@ public class AdminController {
     }
 
     @PostMapping("/products/save")
-    public String saveProduct(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+    public String saveProduct(
+            @ModelAttribute Product product,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            RedirectAttributes redirectAttributes) {
+        
+        // Handle file upload if provided
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Create upload directory if it doesn't exist
+                Path uploadPath = Paths.get(UPLOAD_DIR);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                
+                // Generate unique filename
+                String originalFilename = imageFile.getOriginalFilename();
+                String extension = originalFilename != null && originalFilename.contains(".") 
+                    ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                    : "";
+                String filename = "product-" + System.currentTimeMillis() + extension;
+                
+                // Save file
+                Path filePath = uploadPath.resolve(filename);
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                
+                // Set image URL (relative to static/images)
+                product.setImageUrl("images/" + filename);
+            } catch (IOException e) {
+                redirectAttributes.addFlashAttribute("error", "Failed to upload image: " + e.getMessage());
+                return "redirect:/admin/products";
+            }
+        }
+        
+        // If no new file uploaded and imageUrl is empty, keep existing one
+        if (product.getImageUrl() == null || product.getImageUrl().isEmpty()) {
+            if (product.getId() != null) {
+                Product existingProduct = productService.findById(product.getId()).orElse(null);
+                if (existingProduct != null) {
+                    product.setImageUrl(existingProduct.getImageUrl());
+                }
+            }
+        }
+        
         productService.save(product);
         redirectAttributes.addFlashAttribute("success", "Product saved successfully!");
         return "redirect:/admin/products";
@@ -201,5 +288,93 @@ public class AdminController {
         orderService.updateOrderStatus(id, status);
         redirectAttributes.addFlashAttribute("success", "Order status updated successfully!");
         return "redirect:/admin/orders/" + id;
+    }
+
+    // ==================== CONTACT MANAGEMENT ====================
+    @GetMapping("/contacts")
+    public String listContacts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Contact> contactPage = contactRepository.findAllByOrderByCreatedAtDesc(pageable);
+        model.addAttribute("contacts", contactPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", contactPage.getTotalPages());
+        model.addAttribute("totalItems", contactPage.getTotalElements());
+        model.addAttribute("unreadCount", contactRepository.countByIsReadFalse());
+        return "admin/contacts";
+    }
+
+    @GetMapping("/contacts/{id}")
+    public String viewContact(@PathVariable("id") Long id, Model model) {
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Contact not found"));
+        
+        // Mark as read
+        contact.setRead(true);
+        contactRepository.save(contact);
+        
+        model.addAttribute("contact", contact);
+        return "admin/contact-detail";
+    }
+
+    @PostMapping("/contacts/{id}/delete")
+    public String deleteContact(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            contactRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Contact deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error deleting contact: " + e.getMessage());
+        }
+        return "redirect:/admin/contacts";
+    }
+
+    // ==================== ABOUT MANAGEMENT ====================
+    @GetMapping("/about")
+    public String aboutPage(Model model) {
+        About about = aboutRepository.findFirstByOrderByIdAsc().orElse(new About());
+        model.addAttribute("about", about);
+        return "admin/about-form";
+    }
+
+    @PostMapping("/about/save")
+    public String saveAbout(
+            @ModelAttribute About about,
+            RedirectAttributes redirectAttributes) {
+        // If about doesn't have an ID, it's new, otherwise update existing
+        if (about.getId() == null) {
+            About existingAbout = aboutRepository.findFirstByOrderByIdAsc().orElse(null);
+            if (existingAbout != null) {
+                about.setId(existingAbout.getId());
+            }
+        }
+        aboutRepository.save(about);
+        redirectAttributes.addFlashAttribute("success", "About page updated successfully!");
+        return "redirect:/admin/about";
+    }
+
+    // ==================== CONTACT INFO MANAGEMENT ====================
+    @GetMapping("/contact-info")
+    public String contactInfoPage(Model model) {
+        ContactInfo contactInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(new ContactInfo());
+        model.addAttribute("contactInfo", contactInfo);
+        return "admin/contact-info-form";
+    }
+
+    @PostMapping("/contact-info/save")
+    public String saveContactInfo(
+            @ModelAttribute ContactInfo contactInfo,
+            RedirectAttributes redirectAttributes) {
+        // If contactInfo doesn't have an ID, it's new, otherwise update existing
+        if (contactInfo.getId() == null) {
+            ContactInfo existingInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);
+            if (existingInfo != null) {
+                contactInfo.setId(existingInfo.getId());
+            }
+        }
+        contactInfoRepository.save(contactInfo);
+        redirectAttributes.addFlashAttribute("success", "Contact information updated successfully!");
+        return "redirect:/admin/contact-info";
     }
 }

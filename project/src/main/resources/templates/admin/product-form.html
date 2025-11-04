@@ -22,7 +22,7 @@
     <div class="container mt-5">
       <h1 th:text="${product.id != null ? 'Edit Product' : 'Add New Product'}">Product Form</h1>
 
-      <form th:action="@{/admin/products/save}" th:object="${product}" method="post" class="mt-4">
+      <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data" class="mt-4">
         <input type="hidden" th:field="*{id}" />
 
         <div class="mb-3">
@@ -36,8 +36,19 @@
         </div>
 
         <div class="mb-3">
-          <label for="imageUrl" class="form-label">Image URL *</label>
-          <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" required />
+          <label for="imageFile" class="form-label">Product Image *</label>
+          <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" />
+          <small class="form-text text-muted">Upload an image file (JPG, PNG, etc.)</small>
+          <div th:if="${product.id != null && product.imageUrl != null}" class="mt-2">
+            <p class="text-muted">Current image:</p>
+            <img th:src="@{'/' + ${product.imageUrl}}" alt="Current product image" style="max-width: 200px; max-height: 200px;" class="img-thumbnail" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="imageUrl" class="form-label">Or enter Image URL</label>
+          <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" placeholder="e.g., images/product-1.jpg" />
+          <small class="form-text text-muted">Leave empty if uploading a file above</small>
         </div>
 
         <div class="mb-3">

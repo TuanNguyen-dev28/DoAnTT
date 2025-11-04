@@ -9,6 +9,7 @@ import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.CartItemRepository;
 import ecommerce.project.repository.OrderRepository;
 import ecommerce.project.repository.OrderItemRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -74,14 +78,50 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
         
         // Clear cart after order is created - delete all cart items from database
-        Set<CartItem> cartItemsToDelete = new HashSet<>(cart.getCartItems());
-        for (CartItem cartItem : cartItemsToDelete) {
-            cartItemRepository.delete(cartItem);
+        // Get cart ID first
+        Long cartId = cart.getId();
+        
+        if (cartId == null) {
+            // If cart doesn't have an ID, it might not be persisted yet
+            // Just clear the in-memory cart items
+            cart.getCartItems().clear();
+            cart.setTotalItems(0);
+            cart.setTotalPrice(BigDecimal.ZERO);
+            return savedOrder;
         }
+        
+        // Get all cart item IDs before deleting
+        Set<Long> cartItemIds = new HashSet<>();
+        for (CartItem cartItem : cart.getCartItems()) {
+            if (cartItem.getId() != null) {
+                cartItemIds.add(cartItem.getId());
+            }
+        }
+        
+        // Delete all cart items by ID (this avoids detached entity issues)
+        for (Long itemId : cartItemIds) {
+            cartItemRepository.deleteById(itemId);
+        }
+        
+        // Flush entity manager to ensure all deletes are committed before reloading
+        entityManager.flush();
+        entityManager.clear(); // Clear persistence context to avoid stale entities
+        
+        // Reload cart from database (fresh entity, no cart items)
+        Cart reloadedCart = cartRepository.findById(cartId).orElse(null);
+        if (reloadedCart != null) {
+            // Clear cartItems collection (should be empty after delete)
+            reloadedCart.getCartItems().clear();
+            reloadedCart.setTotalItems(0);
+            reloadedCart.setTotalPrice(BigDecimal.ZERO);
+            // Save the managed cart entity
+            cartRepository.save(reloadedCart);
+        }
+        
+        // Also clear in-memory cart for consistency
         cart.getCartItems().clear();
         cart.setTotalItems(0);
         cart.setTotalPrice(BigDecimal.ZERO);
-        cartRepository.save(cart);
 
         return savedOrder;
     }

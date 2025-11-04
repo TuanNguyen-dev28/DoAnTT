@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ecommerce.project.entity.About;
+import ecommerce.project.entity.ContactInfo;
 import ecommerce.project.entity.Product;
+import ecommerce.project.repository.AboutRepository;
+import ecommerce.project.repository.ContactInfoRepository;
 import ecommerce.project.repository.ProductRepository;
 import java.util.List;
 
@@ -17,6 +21,12 @@ public class homeController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private AboutRepository aboutRepository;
+
+    @Autowired
+    private ContactInfoRepository contactInfoRepository;
+
     @GetMapping("/")
     public String home(Model model) {
         // Lấy danh sách sản phẩm và giới hạn số lượng để hiển thị trên trang chủ
@@ -24,6 +34,11 @@ public class homeController {
         model.addAttribute("bestSellers", productRepository.findByIsBestSellerTrue().stream().limit(8).toList());
         // Lấy một vài sản phẩm bất kỳ cho mục "You may also like"
         model.addAttribute("youMayLike", productRepository.findAll().stream().limit(8).toList());
+        
+        // Load contact info for footer
+        ContactInfo contactInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);
+        model.addAttribute("contactInfo", contactInfo);
+        
         return "index";
     }
 
@@ -50,6 +65,13 @@ public class homeController {
     @GetMapping("/contact")
     public String contact() {
         return "contact";
+    }
+
+    @GetMapping("/about")
+    public String about(Model model) {
+        About about = aboutRepository.findFirstByOrderByIdAsc().orElse(null);
+        model.addAttribute("about", about);
+        return "about";
     }
 
     // --- BẮT ĐẦU: THÊM PHƯƠNG THỨC XEM CHI TIẾT SẢN PHẨM ---

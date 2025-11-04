@@ -144,7 +144,7 @@
                         aria-labelledby="dropdownPages"
                       >
                         <li>
-                          <a href="#" class="dropdown-item item-anchor"
+                          <a th:href="@{/about}" class="dropdown-item item-anchor"
                             >About
                           </a>
                         </li>
@@ -163,7 +163,7 @@
                           </a>
                         </li>
                         <li>
-                          <a href="#" class="dropdown-item item-anchor"
+                          <a th:href="@{/contact}" class="dropdown-item item-anchor"
                             >Contact
                           </a>
                         </li>
@@ -173,7 +173,7 @@
                       <a class="nav-link" href="#">Blog</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#">Contact</a>
+                      <a class="nav-link" th:href="@{/contact}">Contact</a>
                     </li>
                     <!-- Thêm link đăng nhập/đăng xuất -->
                     <li class="nav-item d-lg-none">
@@ -200,9 +200,9 @@
               <ul class="list-unstyled d-flex m-0">
                 <!-- Hiển thị tên người dùng và nút logout nếu đã đăng nhập -->
                 <li class="d-none d-lg-block" sec:authorize="isAuthenticated()">
-                  <span class="text-uppercase mx-3"
+                  <a th:href="@{/profile}" class="text-uppercase mx-3 text-decoration-none"
                     >Hi, <span sec:authentication="name"></span
-                  ></span>
+                  ></a>
                 </li>
                 <!-- Thêm link Admin Dashboard -->
                 <li class="d-none d-lg-block" sec:authorize="hasRole('ADMIN')">

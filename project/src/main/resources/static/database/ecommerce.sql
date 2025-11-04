@@ -28,15 +28,40 @@ CREATE TABLE `product` (
 TRUNCATE TABLE `product`;
 
 -- Thêm dữ liệu mới với đầy đủ các cột
-INSERT INTO `product` (`id`, `name`, `price`, `image_url`, `description`, `category`, `stock_quantity`, `rating`, `is_new_arrival`, `is_best_seller`, `is_limited_edition`, `material`, `color`, `available_sizes`, `season`) VALUES
-(1, 'Dark Florish Onepiece', 95.00, 'images/product-item-1.jpg', 'A beautiful dark florish onepiece, perfect for any occasion.', 'clothes', 50, 4.50, b'1', b'1', b'0', 'Polyester', 'Black', 'S,M,L', 'Summer'),
-(2, 'Baggy Shirt', 55.00, 'images/product-item-2.jpg', 'A comfortable and stylish baggy shirt.', 'clothes', 100, 4.20, b'1', b'0', b'0', 'Cotton', 'White', 'M,L,XL', 'Spring'),
-(3, 'Cotton Off-white Shirt', 65.00, 'images/product-item-3.jpg', 'A classic off-white shirt made from pure cotton.', 'clothes', 80, 4.80, b'0', b'1', b'0', 'Cotton', 'Off-white', 'S,M,L', 'All'),
-(4, 'Crop Sweater', 50.00, 'images/product-item-4.jpg', 'A trendy crop sweater for a modern look.', 'clothes', 120, 4.00, b'1', b'0', b'0', 'Wool', 'Gray', 'S,M', 'Autumn'),
-(5, 'Leather Handbag', 120.00, 'images/product-item-5.jpg', 'A stylish leather handbag for everyday use.', 'accessories', 30, 4.90, b'0', b'1', b'1', 'Leather', 'Brown', NULL, 'All'),
-(6, 'Handmade Crop Sweater', 70.00, 'images/product-item-6.jpg', 'A unique handmade crop sweater.', 'clothes', 40, 4.60, b'1', b'0', b'1', 'Wool', 'Beige', 'S,M,L', 'Winter'),
-(7, 'Silver Necklace', 85.00, 'images/product-item-7.jpg', 'An elegant silver necklace with a unique pendant.', 'accessories', 60, 4.70, b'0', b'0', b'0', 'Silver', 'Silver', NULL, 'All'),
-(8, 'Stylish Sunglasses', 45.00, 'images/product-item-8.jpg', 'Protect your eyes with these stylish sunglasses.', 'accessories', 150, 4.30, b'1', b'0', b'0', 'Plastic', 'Black', NULL, 'Summer');
+-- WOMEN PRODUCTS (onepiece, sweater, florish, Baggy, Dress, Skirt, Cardigan, Jumpsuit)
+INSERT INTO `product` (`name`, `price`, `image_url`, `description`, `category`, `stock_quantity`, `rating`, `is_new_arrival`, `is_best_seller`, `is_limited_edition`, `material`, `color`, `available_sizes`, `season`) VALUES
+('Dark Florish Onepiece', 95.00, 'images/clothes-1.jpg', 'A beautiful dark florish onepiece, perfect for any occasion. Made with high-quality fabric for comfort and style.', 'clothes', 50, 4.50, b'1', b'1', b'0', 'Polyester', 'Black', 'S,M,L', 'Summer'),
+('Baggy Shirt', 55.00, 'images/clothes-2.jpg', 'Comfortable and stylish baggy shirt, ideal for a relaxed look. Made from soft cotton.', 'clothes', 75, 4.20, b'0', b'1', b'0', 'Cotton', 'White', 'M,L,XL', 'Spring'),
+('Crop Sweater', 50.00, 'images/clothes-4.jpg', 'A trendy crop sweater for a modern look.', 'clothes', 120, 4.00, b'1', b'0', b'0', 'Wool', 'Gray', 'S,M', 'Autumn'),
+('Handmade Crop Sweater', 70.00, 'images/clothes-6.jpg', 'A unique handmade crop sweater.', 'clothes', 40, 4.60, b'1', b'0', b'1', 'Wool', 'Beige', 'S,M,L', 'Winter'),
+('Pleated Midi Skirt', 60.00, 'images/clothes-7.jpg', 'Elegant pleated midi skirt, perfect for a sophisticated and feminine style. Flowy and comfortable.', 'clothes', 35, 4.10, b'0', b'1', b'0', 'Chiffon', 'Navy', 'S,M,L', 'Spring'),
+('Silk Wrap Dress', 130.00, 'images/clothes-12.jpg', 'Luxurious silk wrap dress, elegant and flattering for any figure. Perfect for special occasions.', 'clothes', 25, 4.90, b'0', b'0', b'1', 'Silk', 'Emerald Green', 'S,M,L', 'All'),
+('Oversized Sweater Knit', 65.00, 'images/clothes-11.jpg', 'Cozy oversized knit sweater, perfect for chilly days. Soft and comfortable.', 'clothes', 70, 4.50, b'0', b'0', b'0', 'Wool Blend', 'Cream', 'One Size', 'Winter');
+
+-- MEN PRODUCTS (Men, Shirt, Jeans, Pants, Polo)
+INSERT INTO `product` (`name`, `price`, `image_url`, `description`, `category`, `stock_quantity`, `rating`, `is_new_arrival`, `is_best_seller`, `is_limited_edition`, `material`, `color`, `available_sizes`, `season`) VALUES
+('Men Cotton Shirt', 65.00, 'images/clothes-3.jpg', 'Classic off-white cotton shirt, versatile for both casual and semi-formal wear.', 'clothes', 60, 4.70, b'0', b'1', b'0', 'Cotton', 'Off-white', 'S,M,L,XL', 'All'),
+('Classic Denim Jacket', 120.00, 'images/clothes-4.jpg', 'Timeless classic denim jacket, a must-have for every wardrobe. Durable and stylish.', 'clothes', 40, 4.60, b'0', b'1', b'0', 'Denim', 'Blue', 'S,M,L', 'All'),
+('Slim Fit Jeans', 85.00, 'images/clothes-6.jpg', 'Modern slim fit jeans, offering a sleek look and comfortable stretch. Ideal for daily wear.', 'clothes', 90, 4.40, b'0', b'0', b'0', 'Denim', 'Dark Blue', '28,30,32,34', 'All'),
+('Men Summer Linen Pants', 75.00, 'images/clothes-8.jpg', 'Lightweight summer linen pants, breathable and stylish for warm weather. Relaxed fit.', 'clothes', 65, 4.00, b'1', b'0', b'0', 'Linen', 'Beige', 'S,M,L,XL', 'Summer'),
+('Men Vintage Leather Blazer', 110.00, 'images/clothes-9.jpg', 'Stylish vintage leather blazer, adding a touch of class to any outfit. High-quality faux leather.', 'clothes', 30, 4.80, b'1', b'0', b'0', 'Faux Leather', 'Brown', 'S,M,L', 'Autumn'),
+('Men High-Waisted Cargo Pants', 80.00, 'images/clothes-10.jpg', 'Trendy high-waisted cargo pants, combining utility and fashion. Multiple pockets for convenience.', 'clothes', 55, 4.20, b'0', b'1', b'0', 'Cotton Blend', 'Olive Green', 'XS,S,M,L', 'All'),
+('Men Casual Hoodie', 70.00, 'images/clothes-5.jpg', 'Soft and cozy casual hoodie, perfect for everyday comfort. Features a front pocket.', 'clothes', 80, 4.30, b'0', b'0', b'0', 'Fleece', 'Gray', 'M,L,XL', 'Winter');
+
+-- ACCESSORIES (unisex)
+INSERT INTO `product` (`name`, `price`, `image_url`, `description`, `category`, `stock_quantity`, `rating`, `is_new_arrival`, `is_best_seller`, `is_limited_edition`, `material`, `color`, `available_sizes`, `season`) VALUES
+('Leather Handbag', 80.00, 'images/accessory-2.jpg', 'Stylish leather handbag, spacious and durable for daily use. Features multiple compartments.', 'accessories', 45, 4.70, b'0', b'1', b'0', 'Genuine Leather', 'Brown', 'One Size', 'All'),
+('Silver Hoop Earrings', 25.00, 'images/accessory-1.jpg', 'Elegant silver hoop earrings, a timeless accessory for any look. Hypoallergenic material.', 'accessories', 120, 4.60, b'1', b'0', b'0', 'Sterling Silver', 'Silver', 'One Size', 'All'),
+('Minimalist Watch', 120.00, 'images/accessory-3.jpg', 'Sleek minimalist watch, perfect for a sophisticated touch. Water-resistant with a leather strap.', 'accessories', 30, 4.80, b'1', b'1', b'0', 'Stainless Steel, Leather', 'Black', 'One Size', 'All'),
+('Classic Sunglasses', 45.00, 'images/accessory-4.jpg', 'UV protected classic sunglasses, offering both style and eye protection. Lightweight frame.', 'accessories', 100, 4.30, b'0', b'0', b'0', 'Plastic, Metal', 'Black', 'One Size', 'Summer'),
+('Wool Scarf', 30.00, 'images/accessory-5.jpg', 'Warm and soft wool scarf, ideal for colder seasons. Versatile for various styles.', 'accessories', 70, 4.40, b'1', b'0', b'0', 'Wool', 'Gray', 'One Size', 'Winter'),
+('Beanie Hat', 20.00, 'images/accessory-6.jpg', 'Comfortable and stylish beanie hat, perfect for adding a casual touch to your outfit.', 'accessories', 90, 4.10, b'0', b'0', b'0', 'Acrylic', 'Navy', 'One Size', 'Winter'),
+('Elegant Necklace', 60.00, 'images/accessory-7.jpg', 'Delicate and elegant necklace, perfect for enhancing any attire. Features a unique pendant.', 'accessories', 50, 4.70, b'1', b'0', b'0', 'Gold Plated Brass', 'Gold', 'One Size', 'All'),
+('Canvas Tote Bag', 35.00, 'images/accessory-8.jpg', 'Spacious and eco-friendly canvas tote bag, great for shopping or daily essentials. Durable handles.', 'accessories', 80, 4.00, b'0', b'1', b'0', 'Canvas', 'Natural', 'One Size', 'All'),
+('Pearl Drop Earrings', 40.00, 'images/accessory-9.jpg', 'Classic pearl drop earrings, adding a touch of sophistication. Perfect for formal events.', 'accessories', 60, 4.50, b'0', b'0', b'0', 'Sterling Silver, Faux Pearl', 'White', 'One Size', 'All'),
+('Vintage Leather Belt', 50.00, 'images/accessory-10.jpg', 'High-quality vintage leather belt, a versatile accessory for jeans or dresses. Adjustable buckle.', 'accessories', 70, 4.20, b'0', b'0', b'0', 'Genuine Leather', 'Dark Brown', 'S,M,L', 'All'),
+('Silk Hair Scrunchie', 15.00, 'images/accessory-11.jpg', 'Gentle silk hair scrunchie, prevents hair breakage and adds a chic touch. Various colors available.', 'accessories', 150, 4.60, b'1', b'0', b'0', 'Silk', 'Pink', 'One Size', 'All'),
+('Classic Wallet', 65.00, 'images/accessory-12.jpg', 'Compact and functional classic wallet, with multiple card slots and a coin pocket. RFID protected.', 'accessories', 55, 4.30, b'1', b'0', b'0', 'PU Leather', 'Black', 'One Size', 'All');
 
 -- --------------------------------------------------------
 
@@ -171,7 +196,7 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT cho bảng `carts`
@@ -258,6 +283,39 @@ CREATE TABLE `order_items` (
   KEY `FK_order_items_product` (`product_id`),
   CONSTRAINT `FK_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   CONSTRAINT `FK_order_items_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subject` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime NOT NULL,
+  `is_read` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `about`
+--
+
+CREATE TABLE `about` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `title` text COLLATE utf8mb4_unicode_ci,
+  `content` text COLLATE utf8mb4_unicode_ci,
+  `mission` text COLLATE utf8mb4_unicode_ci,
+  `vision` text COLLATE utf8mb4_unicode_ci,
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

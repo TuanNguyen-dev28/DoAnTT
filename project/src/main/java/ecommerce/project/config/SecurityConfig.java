@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Các trang/hành động yêu cầu xác thực
                         .requestMatchers("/cart", "/add-to-cart", "/update-cart", "/delete-from-cart/**", 
-                                        "/checkout", "/orders/**", "/order/**").authenticated()
+                                        "/checkout", "/orders/**", "/order/**", "/profile/**").authenticated()
                         // Yêu cầu vai trò ADMIN cho các trang admin
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // Cho phép tất cả các request khác (bao gồm trang chủ, xem sản phẩm, tài nguyên tĩnh, v.v.)
