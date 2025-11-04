@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ecommerce.project.entity.Product;
 import ecommerce.project.repository.ProductRepository;
@@ -66,4 +67,13 @@ public class homeController {
         return "single-product"; // Trả về trang single-product.html
     }
     // --- KẾT THÚC ---
+
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
+        List<Product> products = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+        model.addAttribute("products", products);
+        model.addAttribute("title", "Search Results: " + keyword);
+        model.addAttribute("keyword", keyword);
+        return "search-results";
+    }
 }

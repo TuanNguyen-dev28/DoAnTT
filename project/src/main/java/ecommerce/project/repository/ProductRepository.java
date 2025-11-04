@@ -31,4 +31,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.season = :season AND p.imageUrl IS NOT NULL AND p.imageUrl <> ''")
     List<Product> findBySeason(String season);
+
+    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
 }

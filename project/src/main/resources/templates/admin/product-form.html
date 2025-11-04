@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="${product.id != null ? 'Edit Product' : 'Add Product'}">Product Form</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin/dashboard}">Admin Panel</a>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" th:href="@{/admin/products}">Back to Products</a>
+          <a class="nav-link" th:href="@{/}">Home</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h1 th:text="${product.id != null ? 'Edit Product' : 'Add New Product'}">Product Form</h1>
+
+      <form th:action="@{/admin/products/save}" th:object="${product}" method="post" class="mt-4">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+          <label for="name" class="form-label">Name *</label>
+          <input type="text" class="form-control" id="name" th:field="*{name}" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Price *</label>
+          <input type="number" class="form-control" id="price" th:field="*{price}" step="0.01" min="0" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="imageUrl" class="form-label">Image URL *</label>
+          <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="category" class="form-label">Category *</label>
+          <select class="form-control" id="category" th:field="*{category}" required>
+            <option value="">Select Category</option>
+            <option value="clothes">Clothes</option>
+            <option value="accessories">Accessories</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="stockQuantity" class="form-label">Stock Quantity *</label>
+          <input type="number" class="form-control" id="stockQuantity" th:field="*{stockQuantity}" min="0" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="rating" class="form-label">Rating</label>
+          <input type="number" class="form-control" id="rating" th:field="*{rating}" step="0.1" min="0" max="5" />
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="isNewArrival" th:field="*{newArrival}" />
+            <label class="form-check-label" for="isNewArrival">New Arrival</label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="isBestSeller" th:field="*{bestSeller}" />
+            <label class="form-check-label" for="isBestSeller">Best Seller</label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="isLimitedEdition" th:field="*{limitedEdition}" />
+            <label class="form-check-label" for="isLimitedEdition">Limited Edition</label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="material" class="form-label">Material</label>
+          <input type="text" class="form-control" id="material" th:field="*{material}" />
+        </div>
+
+        <div class="mb-3">
+          <label for="color" class="form-label">Color</label>
+          <input type="text" class="form-control" id="color" th:field="*{color}" />
+        </div>
+
+        <div class="mb-3">
+          <label for="availableSizes" class="form-label">Available Sizes</label>
+          <input type="text" class="form-control" id="availableSizes" th:field="*{availableSizes}" placeholder="e.g., S,M,L,XL" />
+        </div>
+
+        <div class="mb-3">
+          <label for="season" class="form-label">Season</label>
+          <select class="form-control" id="season" th:field="*{season}">
+            <option value="">Select Season</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+            <option value="Autumn">Autumn</option>
+            <option value="Winter">Winter</option>
+            <option value="All">All</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Product</button>
+        <a th:href="@{/admin/products}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+
