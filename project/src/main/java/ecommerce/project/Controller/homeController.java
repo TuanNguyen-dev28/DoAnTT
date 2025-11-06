@@ -62,11 +62,6 @@ public class homeController {
         return viewName;
     }
 
-    @GetMapping("/contact")
-    public String contact() {
-        return "contact";
-    }
-
     @GetMapping("/about")
     public String about(Model model) {
         About about = aboutRepository.findFirstByOrderByIdAsc().orElse(null);

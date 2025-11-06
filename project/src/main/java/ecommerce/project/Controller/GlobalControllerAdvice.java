@@ -1,7 +1,8 @@
 package ecommerce.project.controller;
 
-import ecommerce.project.entity.Cart;
+import ecommerce.project.entity.ContactInfo;
 import ecommerce.project.entity.User;
+import ecommerce.project.repository.ContactInfoRepository;
 import ecommerce.project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -16,6 +17,9 @@ public class GlobalControllerAdvice {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ContactInfoRepository contactInfoRepository;
+
     @ModelAttribute
     public void addGlobalAttributes(Model model, Principal principal) {
         if (principal != null) {
@@ -24,5 +28,9 @@ public class GlobalControllerAdvice {
                 model.addAttribute("totalItems", user.getCart().getTotalItems());
             }
         }
+        
+        // Add contact info to all pages
+        ContactInfo contactInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);
+        model.addAttribute("contactInfo", contactInfo);
     }
 }

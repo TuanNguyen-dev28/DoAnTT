@@ -59,17 +59,16 @@
             <h2>Get in Touch</h2>
             <div class="contact-detail d-flex flex-wrap mt-4">
               <div class="detail mr-6 mb-4">
-                <p>
-                  We're here to help! Whether you have a question about our
-                  products, an order, or just want to share your feedback, we'd
-                  love to hear from you. Fill out the form, and our team will
-                  get back to you as soon as possible.
-                </p>
+                <p th:text="${contactInfo != null && contactInfo.description != null ? contactInfo.description : 'We are here to help! Whether you have a question about our products, an order, or just want to share your feedback, we would love to hear from you. Fill out the form, and our team will get back to you as soon as possible.'}"></p>
                 <ul class="list-unstyled">
-                  <li class="pb-3">88 Street, 88000, New York, USA</li>
-                  <li class="pb-3">+00 888 8888</li>
+                  <li class="pb-3" th:text="${contactInfo != null && contactInfo.address != null ? contactInfo.address : '88 Street, 88000, New York, USA'}"></li>
                   <li class="pb-3">
-                    <a href="mailto:info@yourinfo.com">info@yourinfo.com</a>
+                    <a th:href="'tel:' + ${contactInfo != null && contactInfo.phone != null ? contactInfo.phone : '+00 888 8888'}" 
+                       th:text="${contactInfo != null && contactInfo.phone != null ? contactInfo.phone : '+00 888 8888'}"></a>
+                  </li>
+                  <li class="pb-3">
+                    <a th:href="'mailto:' + ${contactInfo != null && contactInfo.email != null ? contactInfo.email : 'info@yourinfo.com'}" 
+                       th:text="${contactInfo != null && contactInfo.email != null ? contactInfo.email : 'info@yourinfo.com'}"></a>
                   </li>
                 </ul>
               </div>

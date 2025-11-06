@@ -16,7 +16,6 @@ import ecommerce.project.service.OrderService;
 import ecommerce.project.service.ProductService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -366,14 +365,30 @@ public class AdminController {
     public String saveContactInfo(
             @ModelAttribute ContactInfo contactInfo,
             RedirectAttributes redirectAttributes) {
-        // If contactInfo doesn't have an ID, it's new, otherwise update existing
+        // Check if contactInfo is null
+        if (contactInfo == null) {
+            contactInfo = new ContactInfo();
+        }
+        
+        // If contactInfo doesn't have an ID, try to get existing one
         if (contactInfo.getId() == null) {
             ContactInfo existingInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);
             if (existingInfo != null) {
-                contactInfo.setId(existingInfo.getId());
+                // Update existing record
+                existingInfo.setAddress(contactInfo.getAddress());
+                existingInfo.setPhone(contactInfo.getPhone());
+                existingInfo.setEmail(contactInfo.getEmail());
+                existingInfo.setDescription(contactInfo.getDescription());
+                contactInfoRepository.save(existingInfo);
+            } else {
+                // Create new record
+                contactInfoRepository.save(contactInfo);
             }
+        } else {
+            // Update existing record
+            contactInfoRepository.save(contactInfo);
         }
-        contactInfoRepository.save(contactInfo);
+        
         redirectAttributes.addFlashAttribute("success", "Contact information updated successfully!");
         return "redirect:/admin/contact-info";
     }

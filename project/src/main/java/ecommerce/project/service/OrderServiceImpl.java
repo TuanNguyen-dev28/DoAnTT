@@ -9,7 +9,6 @@ import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.CartItemRepository;
 import ecommerce.project.repository.OrderRepository;
 import ecommerce.project.repository.OrderItemRepository;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +31,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
-
-    @Autowired
-    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -78,7 +74,6 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
         
         // Clear cart after order is created - delete all cart items from database
-        // Get cart ID first
         Long cartId = cart.getId();
         
         if (cartId == null) {
@@ -90,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
             return savedOrder;
         }
         
-        // Get all cart item IDs before deleting
+        // Collect all cart item IDs before deleting
         Set<Long> cartItemIds = new HashSet<>();
         for (CartItem cartItem : cart.getCartItems()) {
             if (cartItem.getId() != null) {
@@ -103,20 +98,8 @@ public class OrderServiceImpl implements OrderService {
             cartItemRepository.deleteById(itemId);
         }
         
-        // Flush entity manager to ensure all deletes are committed before reloading
-        entityManager.flush();
-        entityManager.clear(); // Clear persistence context to avoid stale entities
-        
-        // Reload cart from database (fresh entity, no cart items)
-        Cart reloadedCart = cartRepository.findById(cartId).orElse(null);
-        if (reloadedCart != null) {
-            // Clear cartItems collection (should be empty after delete)
-            reloadedCart.getCartItems().clear();
-            reloadedCart.setTotalItems(0);
-            reloadedCart.setTotalPrice(BigDecimal.ZERO);
-            // Save the managed cart entity
-            cartRepository.save(reloadedCart);
-        }
+        // Update cart totals directly using JPQL (avoids detached entity issues)
+        cartRepository.clearCartTotals(cartId, BigDecimal.ZERO);
         
         // Also clear in-memory cart for consistency
         cart.getCartItems().clear();

@@ -19,6 +19,13 @@ public class ContactController {
     @Autowired
     private ContactInfoRepository contactInfoRepository;
 
+    @GetMapping("/contact")
+    public String contactPage(Model model) {
+        ContactInfo contactInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);
+        model.addAttribute("contactInfo", contactInfo);
+        return "contact";
+    }
+
     @PostMapping("/contact/submit")
     public String submitContact(
             @RequestParam("name") String name,
