@@ -22,12 +22,18 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addGlobalAttributes(Model model, Principal principal) {
+        // Initialize totalItems to 0 by default
+        int totalItems = 0;
+        
         if (principal != null) {
             User user = userRepository.findByUsername(principal.getName()).orElse(null);
             if (user != null && user.getCart() != null) {
-                model.addAttribute("totalItems", user.getCart().getTotalItems());
+                totalItems = user.getCart().getTotalItems();
             }
         }
+        
+        // Always add totalItems to model (even if 0)
+        model.addAttribute("totalItems", totalItems);
         
         // Add contact info to all pages
         ContactInfo contactInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);

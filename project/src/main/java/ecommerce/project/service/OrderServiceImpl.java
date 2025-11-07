@@ -8,7 +8,6 @@ import ecommerce.project.entity.Product;
 import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.CartItemRepository;
 import ecommerce.project.repository.OrderRepository;
-import ecommerce.project.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +21,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
 
     @Autowired
     private CartRepository cartRepository;
@@ -85,18 +81,8 @@ public class OrderServiceImpl implements OrderService {
             return savedOrder;
         }
         
-        // Collect all cart item IDs before deleting
-        Set<Long> cartItemIds = new HashSet<>();
-        for (CartItem cartItem : cart.getCartItems()) {
-            if (cartItem.getId() != null) {
-                cartItemIds.add(cartItem.getId());
-            }
-        }
-        
-        // Delete all cart items by ID (this avoids detached entity issues)
-        for (Long itemId : cartItemIds) {
-            cartItemRepository.deleteById(itemId);
-        }
+        // Delete all cart items for this cart using a single query (more efficient)
+        cartItemRepository.deleteAllByCartId(cartId);
         
         // Update cart totals directly using JPQL (avoids detached entity issues)
         cartRepository.clearCartTotals(cartId, BigDecimal.ZERO);

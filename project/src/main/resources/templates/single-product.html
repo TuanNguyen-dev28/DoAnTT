@@ -30,13 +30,15 @@
       <div class="container">
         <div class="row">
           <div class="col-md-6">
-            <div class="product-image">
-              <img
-                th:src="@{'/' + ${product.imageUrl}}"
-                alt="Product Image"
-                class="img-fluid"
-                style="height: auto; max-height: 700px; object-fit: cover"
-              />
+            <div class="product-image" style="padding-top: 3rem;">
+              <div class="image-holder position-relative" style="width: 100%; height: 500px; overflow: hidden;">
+                <img
+                  th:src="@{'/' + ${product.imageUrl}}"
+                  alt="Product Image"
+                  class="img-fluid"
+                  style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                />
+              </div>
             </div>
           </div>
           <div class="col-md-6">
@@ -101,11 +103,13 @@
                   <div
                     class="swatch-container mb-3"
                     th:if="${product.availableSizes != null and !#strings.isEmpty(product.availableSizes)}"
+                    style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;"
                   >
-                    <h5>Size:</h5>
+                    <h5 style="margin: 0;">Size:</h5>
                     <div
                       class="swatch-element"
                       th:each="size, iterStat : ${#strings.arraySplit(product.availableSizes, ',')}"
+                      style="display: inline-block;"
                     >
                       <input
                         type="radio"

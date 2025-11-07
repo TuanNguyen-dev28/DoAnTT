@@ -29,13 +29,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        // Allow static resources (images, css, js) without authentication
+                        .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
                         // Các trang/hành động yêu cầu xác thực
                         .requestMatchers("/cart", "/add-to-cart", "/update-cart", "/delete-from-cart/**", 
                                         "/checkout", "/orders/**", "/order/**", "/profile/**").authenticated()
                         // Yêu cầu vai trò ADMIN cho các trang admin
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Cho phép tất cả các request khác (bao gồm trang chủ, xem sản phẩm, tài nguyên tĩnh, v.v.)
-                        // Điều này giúp đảm bảo người dùng có thể xem mọi thứ trừ các mục đã được bảo vệ ở trên.
+                        // Cho phép tất cả các request khác (bao gồm trang chủ, xem sản phẩm, v.v.)
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form

@@ -1,12 +1,14 @@
 package ecommerce.project.controller;
 
 import ecommerce.project.entity.About;
+import ecommerce.project.entity.BlogPost;
 import ecommerce.project.entity.Contact;
 import ecommerce.project.entity.ContactInfo;
 import ecommerce.project.entity.Order;
 import ecommerce.project.entity.Product;
 import ecommerce.project.entity.User;
 import ecommerce.project.repository.AboutRepository;
+import ecommerce.project.repository.BlogPostRepository;
 import ecommerce.project.repository.ContactInfoRepository;
 import ecommerce.project.repository.ContactRepository;
 import ecommerce.project.repository.OrderRepository;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -72,7 +75,58 @@ public class AdminController {
     @Autowired
     private ContactInfoRepository contactInfoRepository;
 
+    @Autowired
+    private BlogPostRepository blogPostRepository;
+
     private static final String UPLOAD_DIR = "src/main/resources/static/images/";
+    
+    private Path getUploadPath() throws IOException {
+        // Get the project root directory - try multiple approaches
+        Path uploadPath = null;
+        
+        // Method 1: Try from current working directory
+        Path currentDir = Paths.get("").toAbsolutePath().normalize();
+        uploadPath = currentDir.resolve(UPLOAD_DIR);
+        
+        // Method 2: If that doesn't exist, try from project directory
+        if (!Files.exists(uploadPath.getParent())) {
+            // Try to find project root by looking for pom.xml or build.gradle
+            Path testPath = currentDir;
+            for (int i = 0; i < 3; i++) {
+                if (Files.exists(testPath.resolve("pom.xml")) || Files.exists(testPath.resolve("build.gradle"))) {
+                    uploadPath = testPath.resolve(UPLOAD_DIR);
+                    break;
+                }
+                testPath = testPath.getParent();
+                if (testPath == null) break;
+            }
+        }
+        
+        // Method 3: If still not found, use absolute path from user.dir
+        if (uploadPath == null || !Files.exists(uploadPath.getParent())) {
+            String userDir = System.getProperty("user.dir");
+            if (userDir != null) {
+                uploadPath = Paths.get(userDir).resolve(UPLOAD_DIR);
+            }
+        }
+        
+        // Final fallback: use relative path
+        if (uploadPath == null || !Files.exists(uploadPath.getParent())) {
+            uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath();
+        }
+        
+        // Create directory if it doesn't exist
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+            System.out.println("Created upload directory: " + uploadPath.toAbsolutePath());
+        }
+        
+        System.out.println("Using upload path: " + uploadPath.toAbsolutePath());
+        System.out.println("Upload path exists: " + Files.exists(uploadPath));
+        System.out.println("Upload path is writable: " + Files.isWritable(uploadPath));
+        
+        return uploadPath;
+    }
 
     // ==================== DASHBOARD ====================
     @GetMapping("/dashboard")
@@ -128,6 +182,7 @@ public class AdminController {
     @GetMapping("/products/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new Product());
+        // Pass error message if any
         return "admin/product-form";
     }
 
@@ -145,46 +200,126 @@ public class AdminController {
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             RedirectAttributes redirectAttributes) {
         
-        // Handle file upload if provided
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                // Create upload directory if it doesn't exist
-                Path uploadPath = Paths.get(UPLOAD_DIR);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+        System.out.println("=== SAVE PRODUCT DEBUG ===");
+        System.out.println("Product ID: " + product.getId());
+        System.out.println("Product Name: " + product.getName());
+        System.out.println("ImageFile is null: " + (imageFile == null));
+        if (imageFile != null) {
+            System.out.println("ImageFile is empty: " + imageFile.isEmpty());
+            System.out.println("ImageFile name: " + imageFile.getOriginalFilename());
+            System.out.println("ImageFile size: " + imageFile.getSize());
+        }
+        System.out.println("ImageUrl from form: " + product.getImageUrl());
+        
+        try {
+            // Handle file upload if provided
+            if (imageFile != null && !imageFile.isEmpty()) {
+                // Validate file
+                String originalFilename = imageFile.getOriginalFilename();
+                if (originalFilename == null || originalFilename.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("error", "Invalid image file name");
+                    return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
                 }
                 
+                // Check file size (max 10MB)
+                if (imageFile.getSize() > 10 * 1024 * 1024) {
+                    redirectAttributes.addFlashAttribute("error", "Image file is too large. Maximum size is 10MB");
+                    return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
+                }
+                
+                // Get upload directory
+                Path uploadPath = getUploadPath();
+                
                 // Generate unique filename
-                String originalFilename = imageFile.getOriginalFilename();
-                String extension = originalFilename != null && originalFilename.contains(".") 
-                    ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
-                    : "";
+                String extension = originalFilename.contains(".") 
+                    ? originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase()
+                    : ".jpg";
                 String filename = "product-" + System.currentTimeMillis() + extension;
                 
                 // Save file
                 Path filePath = uploadPath.resolve(filename);
-                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                
+                System.out.println("Attempting to save file to: " + filePath.toAbsolutePath());
+                System.out.println("Upload path exists: " + Files.exists(uploadPath));
+                System.out.println("Upload path is writable: " + Files.isWritable(uploadPath));
+                
+                // Copy file
+                try {
+                    Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("File copy completed");
+                } catch (IOException e) {
+                    System.err.println("Error copying file: " + e.getMessage());
+                    e.printStackTrace();
+                    redirectAttributes.addFlashAttribute("error", "Failed to save image file: " + e.getMessage());
+                    return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
+                }
+                
+                // Verify file was saved
+                if (!Files.exists(filePath)) {
+                    System.err.println("File was not saved! Path: " + filePath.toAbsolutePath());
+                    redirectAttributes.addFlashAttribute("error", "Failed to save image file - file not found after copy");
+                    return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
+                }
+                
+                // Check file size
+                long fileSize = Files.size(filePath);
+                System.out.println("File saved successfully! Size: " + fileSize + " bytes");
                 
                 // Set image URL (relative to static/images)
                 product.setImageUrl("images/" + filename);
-            } catch (IOException e) {
-                redirectAttributes.addFlashAttribute("error", "Failed to upload image: " + e.getMessage());
-                return "redirect:/admin/products";
-            }
-        }
-        
-        // If no new file uploaded and imageUrl is empty, keep existing one
-        if (product.getImageUrl() == null || product.getImageUrl().isEmpty()) {
-            if (product.getId() != null) {
-                Product existingProduct = productService.findById(product.getId()).orElse(null);
-                if (existingProduct != null) {
-                    product.setImageUrl(existingProduct.getImageUrl());
+                
+                System.out.println("Image saved successfully to: " + filePath.toAbsolutePath());
+                System.out.println("Image URL set to: " + product.getImageUrl());
+            } else {
+                // If no new file uploaded
+                if (product.getId() != null) {
+                    // Editing existing product - keep existing image if no new one uploaded
+                    Product existingProduct = productService.findById(product.getId()).orElse(null);
+                    if (existingProduct != null && (product.getImageUrl() == null || product.getImageUrl().isEmpty())) {
+                        product.setImageUrl(existingProduct.getImageUrl());
+                    }
+                } else {
+                    // New product - require either file upload or imageUrl
+                    if (product.getImageUrl() == null || product.getImageUrl().trim().isEmpty()) {
+                        redirectAttributes.addFlashAttribute("error", "Please upload an image file or enter an image URL");
+                        return "redirect:/admin/products/add";
+                    }
                 }
             }
+            
+            // Verify product has imageUrl before saving
+            if (product.getImageUrl() == null || product.getImageUrl().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Product must have an image. Please upload an image file or enter an image URL.");
+                return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
+            }
+            
+            // Save product to database
+            System.out.println("Saving product to database...");
+            System.out.println("Product details:");
+            System.out.println("  - Name: " + product.getName());
+            System.out.println("  - Price: " + product.getPrice());
+            System.out.println("  - ImageUrl: " + product.getImageUrl());
+            System.out.println("  - Category: " + product.getCategory());
+            System.out.println("  - Stock: " + product.getStockQuantity());
+            
+            Product savedProduct = productService.save(product);
+            
+            System.out.println("Product saved successfully with ID: " + savedProduct.getId());
+            System.out.println("Saved product imageUrl: " + savedProduct.getImageUrl());
+            
+            redirectAttributes.addFlashAttribute("success", "Product saved successfully! Image: " + savedProduct.getImageUrl());
+        } catch (IOException e) {
+            System.err.println("IOException during save: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Failed to upload image: " + e.getMessage());
+            return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
+        } catch (Exception e) {
+            System.err.println("Exception during save: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error saving product: " + e.getMessage());
+            return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
         }
         
-        productService.save(product);
-        redirectAttributes.addFlashAttribute("success", "Product saved successfully!");
         return "redirect:/admin/products";
     }
 
@@ -362,34 +497,150 @@ public class AdminController {
     }
 
     @PostMapping("/contact-info/save")
+    @Transactional
     public String saveContactInfo(
             @ModelAttribute ContactInfo contactInfo,
             RedirectAttributes redirectAttributes) {
-        // Check if contactInfo is null
-        if (contactInfo == null) {
-            contactInfo = new ContactInfo();
-        }
-        
-        // If contactInfo doesn't have an ID, try to get existing one
-        if (contactInfo.getId() == null) {
+        try {
+            // Always get the existing record first (if any)
             ContactInfo existingInfo = contactInfoRepository.findFirstByOrderByIdAsc().orElse(null);
+            
             if (existingInfo != null) {
-                // Update existing record
-                existingInfo.setAddress(contactInfo.getAddress());
-                existingInfo.setPhone(contactInfo.getPhone());
-                existingInfo.setEmail(contactInfo.getEmail());
-                existingInfo.setDescription(contactInfo.getDescription());
-                contactInfoRepository.save(existingInfo);
+                // Update existing record - always update all fields
+                existingInfo.setAddress(contactInfo.getAddress() != null ? contactInfo.getAddress().trim() : null);
+                existingInfo.setPhone(contactInfo.getPhone() != null ? contactInfo.getPhone().trim() : null);
+                existingInfo.setEmail(contactInfo.getEmail() != null ? contactInfo.getEmail().trim() : null);
+                existingInfo.setDescription(contactInfo.getDescription() != null ? contactInfo.getDescription().trim() : null);
+                // Use saveAndFlush to ensure changes are persisted immediately
+                contactInfoRepository.saveAndFlush(existingInfo);
             } else {
-                // Create new record
-                contactInfoRepository.save(contactInfo);
+                // Create new record if none exists
+                if (contactInfo == null) {
+                    contactInfo = new ContactInfo();
+                }
+                // Trim all fields
+                if (contactInfo.getAddress() != null) {
+                    contactInfo.setAddress(contactInfo.getAddress().trim());
+                }
+                if (contactInfo.getPhone() != null) {
+                    contactInfo.setPhone(contactInfo.getPhone().trim());
+                }
+                if (contactInfo.getEmail() != null) {
+                    contactInfo.setEmail(contactInfo.getEmail().trim());
+                }
+                if (contactInfo.getDescription() != null) {
+                    contactInfo.setDescription(contactInfo.getDescription().trim());
+                }
+                // Use saveAndFlush to ensure changes are persisted immediately
+                contactInfoRepository.saveAndFlush(contactInfo);
             }
-        } else {
-            // Update existing record
-            contactInfoRepository.save(contactInfo);
+            
+            // Clean up any duplicate records (keep only the first one)
+            try {
+                List<ContactInfo> allRecords = contactInfoRepository.findAll();
+                if (allRecords.size() > 1) {
+                    // Keep the first record, delete all others
+                    for (int i = 1; i < allRecords.size(); i++) {
+                        contactInfoRepository.deleteById(allRecords.get(i).getId());
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore cleanup errors
+            }
+            
+            redirectAttributes.addFlashAttribute("success", "Contact information updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating contact information: " + e.getMessage());
+            e.printStackTrace();
         }
         
-        redirectAttributes.addFlashAttribute("success", "Contact information updated successfully!");
         return "redirect:/admin/contact-info";
+    }
+
+    // ==================== BLOG POST MANAGEMENT ====================
+    @GetMapping("/blog-posts")
+    public String listBlogPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BlogPost> blogPostPage = blogPostRepository.findAllByOrderByCreatedAtDesc(pageable);
+        model.addAttribute("blogPosts", blogPostPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", blogPostPage.getTotalPages());
+        model.addAttribute("totalItems", blogPostPage.getTotalElements());
+        return "admin/blog-posts";
+    }
+
+    @GetMapping("/blog-posts/add")
+    public String showAddBlogPostForm(Model model) {
+        model.addAttribute("blogPost", new BlogPost());
+        return "admin/blog-post-form";
+    }
+
+    @GetMapping("/blog-posts/edit/{id}")
+    public String showEditBlogPostForm(@PathVariable("id") Long id, Model model) {
+        BlogPost blogPost = blogPostRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid blog post Id:" + id));
+        model.addAttribute("blogPost", blogPost);
+        return "admin/blog-post-form";
+    }
+
+    @PostMapping("/blog-posts/save")
+    public String saveBlogPost(
+            @ModelAttribute BlogPost blogPost,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            RedirectAttributes redirectAttributes) {
+        
+        // Handle file upload if provided
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Create upload directory if it doesn't exist
+                Path uploadPath = getUploadPath();
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                
+                // Generate unique filename
+                String originalFilename = imageFile.getOriginalFilename();
+                String extension = originalFilename != null && originalFilename.contains(".") 
+                    ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                    : "";
+                String filename = "blog-" + System.currentTimeMillis() + extension;
+                
+                // Save file
+                Path filePath = uploadPath.resolve(filename);
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                
+                // Set image URL (relative to static/images)
+                blogPost.setImageUrl("images/" + filename);
+            } catch (IOException e) {
+                redirectAttributes.addFlashAttribute("error", "Failed to upload image: " + e.getMessage());
+                return "redirect:/admin/blog-posts";
+            }
+        }
+        
+        // If no new file uploaded and imageUrl is empty, keep existing one
+        if ((blogPost.getImageUrl() == null || blogPost.getImageUrl().isEmpty()) && blogPost.getId() != null) {
+            BlogPost existingPost = blogPostRepository.findById(blogPost.getId()).orElse(null);
+            if (existingPost != null) {
+                blogPost.setImageUrl(existingPost.getImageUrl());
+            }
+        }
+        
+        blogPostRepository.save(blogPost);
+        redirectAttributes.addFlashAttribute("success", "Blog post saved successfully!");
+        return "redirect:/admin/blog-posts";
+    }
+
+    @PostMapping("/blog-posts/delete/{id}")
+    public String deleteBlogPost(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            blogPostRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Blog post deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error deleting blog post: " + e.getMessage());
+        }
+        return "redirect:/admin/blog-posts";
     }
 }

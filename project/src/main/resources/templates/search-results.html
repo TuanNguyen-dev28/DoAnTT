@@ -35,7 +35,7 @@
           </div>
 
           <div th:unless="${products == null || products.isEmpty()}" class="col-md-12">
-            <p class="mb-4">Found <span th:text="${products.size()}"></span> product(s) for "<span th:text="${keyword}"></span>"</p>
+            <p class="mb-4">Found <span th:text="${totalItems}"></span> product(s) for "<span th:text="${keyword}"></span>"</p>
             <div class="row">
               <div th:each="product : ${products}" class="col-md-3 mb-4">
                 <div class="card h-100">
@@ -66,6 +66,30 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="row" th:if="${totalPages > 1}">
+          <div class="col-12">
+            <nav aria-label="Product pagination">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                  <a class="page-link" th:href="@{/search(keyword=${keyword}, page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li class="page-item" 
+                    th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${pageNum == currentPage ? 'active' : ''}">
+                  <a class="page-link" 
+                     th:href="@{/search(keyword=${keyword}, page=${pageNum})}"
+                     th:text="${pageNum + 1}">
+                  </a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage >= totalPages - 1 ? 'disabled' : ''}">
+                  <a class="page-link" th:href="@{/search(keyword=${keyword}, page=${currentPage + 1})}">Next</a>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>

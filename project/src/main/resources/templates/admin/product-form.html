@@ -22,7 +22,7 @@
     <div class="container mt-5">
       <h1 th:text="${product.id != null ? 'Edit Product' : 'Add New Product'}">Product Form</h1>
 
-      <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data" class="mt-4">
+      <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data" class="mt-4" id="productForm">
         <input type="hidden" th:field="*{id}" />
 
         <div class="mb-3">
@@ -36,19 +36,31 @@
         </div>
 
         <div class="mb-3">
-          <label for="imageFile" class="form-label">Product Image *</label>
-          <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" />
-          <small class="form-text text-muted">Upload an image file (JPG, PNG, etc.)</small>
+          <label for="imageFile" class="form-label">Upload Product Image from Computer <span th:if="${product.id == null}">*</span></label>
+          <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" th:required="${product.id == null}" />
+          <small class="form-text text-muted">
+            <strong>📤 Upload an image file from your computer (JPG, PNG, GIF, etc.)</strong><br/>
+            The image will be <strong>automatically saved to the images folder</strong> and the path will be <strong>saved to MySQL database</strong>.
+          </small>
           <div th:if="${product.id != null && product.imageUrl != null}" class="mt-2">
             <p class="text-muted">Current image:</p>
             <img th:src="@{'/' + ${product.imageUrl}}" alt="Current product image" style="max-width: 200px; max-height: 200px;" class="img-thumbnail" />
+            <p class="text-muted small mt-1">Upload a new image to replace the current one, or leave empty to keep current image</p>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="imageUrl" class="form-label">Or enter Image URL</label>
+          <label for="imageUrl" class="form-label">Or enter Image URL manually <span th:if="${product.id == null}">*</span></label>
           <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" placeholder="e.g., images/product-1.jpg" />
-          <small class="form-text text-muted">Leave empty if uploading a file above</small>
+          <small class="form-text text-muted">
+            <strong>Only use this if you have an existing image URL.</strong><br/>
+            If you upload a file above, this field will be automatically filled by the system.
+          </small>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <span th:text="${error}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
         <div class="mb-3">
@@ -129,6 +141,54 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Auto-fill imageUrl when file is selected (for preview, but server will handle the actual path)
+      document.getElementById('imageFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          console.log('File selected:', file.name);
+          console.log('File size:', file.size, 'bytes');
+          console.log('File type:', file.type);
+          
+          // Show preview
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            // You can show a preview here if needed
+            console.log('File ready for upload');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // Debug form submission
+      document.getElementById('productForm').addEventListener('submit', function(e) {
+        const imageFile = document.getElementById('imageFile');
+        const imageUrl = document.getElementById('imageUrl');
+        const productId = document.querySelector('input[name="id"]').value;
+        
+        console.log('=== FORM SUBMISSION DEBUG ===');
+        console.log('Product ID:', productId || 'NEW PRODUCT');
+        console.log('ImageFile selected:', imageFile.files.length > 0 ? imageFile.files[0].name : 'No file');
+        console.log('ImageUrl value:', imageUrl.value);
+        
+        // Validate for new products
+        if (!productId && !imageFile.files.length && !imageUrl.value.trim()) {
+          alert('⚠️ Please upload an image file from your computer!\n\nThe image will be automatically saved to the images folder and the path will be saved to the database.');
+          e.preventDefault();
+          return false;
+        }
+        
+        if (imageFile.files.length > 0) {
+          const file = imageFile.files[0];
+          if (file.size > 10 * 1024 * 1024) {
+            alert('⚠️ Image file is too large! Maximum size is 10MB.');
+            e.preventDefault();
+            return false;
+          }
+          console.log('✅ File validation passed. Submitting form...');
+        }
+      });
+    </script>
   </body>
 </html>
 

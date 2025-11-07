@@ -333,4 +333,68 @@ CREATE TABLE `contact_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint NOT NULL,
+  `expiry_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_token` (`token`),
+  KEY `FK_password_reset_user` (`user_id`),
+  CONSTRAINT `FK_password_reset_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `blog_posts`
+--
+
+CREATE TABLE `blog_posts` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci,
+  `excerpt` text COLLATE utf8mb4_unicode_ci,
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dữ liệu mẫu cho bảng `blog_posts`
+--
+
+INSERT INTO `blog_posts` (`title`, `content`, `excerpt`, `image_url`, `category`, `created_at`, `updated_at`) VALUES
+('How to look outstanding in pastel', 
+'<p>Dignissim lacus, turpis ut suspendisse vel tellus. Turpis purus, gravida orci, fringilla dignissim lacus, turpis ut suspendisse vel tellus. Ac sed eu fringilla odio mi. Consequat pharetra at magna imperdiet cursus ac faucibus sit libero.</p><p>Ultricies quam nunc, lorem sit lorem urna, pretium aliquam ut. In vel, quis donec dolor id in. Pulvinar commodo mollis diam sed facilisis at cursus imperdiet cursus ac faucibus sit faucibus sit libero.</p><p>Fashion is not just about wearing clothes, it\'s about expressing yourself. Pastel colors have become a trend that never goes out of style. They bring a soft, elegant touch to any outfit and make you stand out in a crowd.</p>', 
+'Dignissim lacus, turpis ut suspendisse vel tellus. Turpis purus, gravida orci, fringilla...', 
+'images/post-image1.jpg', 
+'Fashion', 
+NOW(), 
+NOW()),
+
+('Top 10 fashion trend for summer', 
+'<p>Summer fashion is all about staying cool while looking hot. This season brings fresh trends that will make you the center of attention.</p><h3>1. Lightweight Fabrics</h3><p>Choose breathable materials like cotton, linen, and chiffon to stay comfortable in the heat.</p><h3>2. Bright Colors</h3><p>Embrace vibrant hues that reflect the energy of summer. Think coral, turquoise, and sunny yellow.</p><h3>3. Flowy Dresses</h3><p>Maxi and midi dresses in flowing fabrics are perfect for summer days and nights.</p><p>Remember, fashion is personal. Wear what makes you feel confident and beautiful!</p>', 
+'Turpis purus, gravida orci, fringilla dignissim lacus, turpis ut suspendisse vel tellus...', 
+'images/post-image2.jpg', 
+'Fashion', 
+NOW(), 
+NOW()),
+
+('Crazy fashion with unique moment', 
+'<p>Fashion is an art form, and every outfit tells a story. Creating unique moments through your style choices is what makes fashion exciting.</p><p>Don\'t be afraid to experiment with bold combinations, mix patterns, or try unexpected color pairings. The most memorable fashion moments come from taking risks.</p><p>Whether you\'re attending a special event or just going about your day, let your outfit reflect your personality and mood. Fashion should be fun, expressive, and uniquely yours.</p>', 
+'Turpis purus, gravida orci, fringilla dignissim lacus, turpis ut suspendisse vel tellus...', 
+'images/post-image3.jpg', 
+'Fashion', 
+NOW(), 
+NOW());
+
 COMMIT;

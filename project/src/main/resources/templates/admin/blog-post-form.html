@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="${blogPost.id != null ? 'Edit Blog Post' : 'Add Blog Post'}">Blog Post Form</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin/dashboard}">Admin Panel</a>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" th:href="@{/admin/blog-posts}">Back to Blog Posts</a>
+          <a class="nav-link" th:href="@{/}">Home</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h1 th:text="${blogPost.id != null ? 'Edit Blog Post' : 'Add New Blog Post'}">Blog Post Form</h1>
+
+      <div class="alert alert-info mt-3" role="alert">
+        <h5 class="alert-heading">Hướng dẫn tạo Blog Post:</h5>
+        <ul class="mb-0">
+          <li><strong>Title:</strong> Tiêu đề bài viết (bắt buộc)</li>
+          <li><strong>Category:</strong> Danh mục (ví dụ: Fashion, Lifestyle, Tips)</li>
+          <li><strong>Excerpt:</strong> Tóm tắt ngắn sẽ hiển thị ở trang danh sách blog</li>
+          <li><strong>Content:</strong> Nội dung đầy đủ của bài viết (hỗ trợ HTML)</li>
+          <li><strong>Image:</strong> Có thể upload file hoặc nhập URL ảnh</li>
+        </ul>
+      </div>
+
+      <form th:action="@{/admin/blog-posts/save}" th:object="${blogPost}" method="post" enctype="multipart/form-data" class="mt-4">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+          <label for="title" class="form-label">
+            <strong>Title *</strong>
+            <span class="text-danger">(Bắt buộc)</span>
+          </label>
+          <input type="text" class="form-control" id="title" th:field="*{title}" required 
+                 placeholder="Ví dụ: How to look outstanding in pastel" />
+          <small class="form-text text-muted">Nhập tiêu đề bài viết</small>
+        </div>
+
+        <div class="mb-3">
+          <label for="category" class="form-label">
+            <strong>Category</strong>
+            <span class="text-muted">(Tùy chọn)</span>
+          </label>
+          <input type="text" class="form-control" id="category" th:field="*{category}" 
+                 placeholder="Ví dụ: Fashion, Lifestyle, Tips, Style Guide" />
+          <small class="form-text text-muted">Phân loại bài viết để dễ tìm kiếm và lọc</small>
+        </div>
+
+        <div class="mb-3">
+          <label for="excerpt" class="form-label">
+            <strong>Excerpt</strong>
+            <span class="text-muted">(Tùy chọn - Khuyến nghị)</span>
+          </label>
+          <textarea class="form-control" id="excerpt" th:field="*{excerpt}" rows="3" 
+                    placeholder="Ví dụ: Dignissim lacus, turpis ut suspendisse vel tellus. Turpis purus, gravida orci, fringilla..."></textarea>
+          <small class="form-text text-muted">
+            Tóm tắt ngắn (100-200 ký tự) sẽ hiển thị ở trang danh sách blog. Nếu để trống, hệ thống sẽ tự động cắt từ nội dung chính.
+          </small>
+        </div>
+
+        <div class="mb-3">
+          <label for="content" class="form-label">
+            <strong>Content *</strong>
+            <span class="text-danger">(Bắt buộc)</span>
+          </label>
+          <textarea class="form-control" id="content" th:field="*{content}" rows="15" required
+                    placeholder="Nhập nội dung đầy đủ của bài viết..."></textarea>
+          <small class="form-text text-muted">
+            Nội dung đầy đủ của bài viết. Hỗ trợ HTML để format text, thêm link, hình ảnh, etc.
+            <br>
+            <strong>Ví dụ HTML:</strong> &lt;p&gt;Đoạn văn&lt;/p&gt; &lt;strong&gt;Chữ đậm&lt;/strong&gt; &lt;em&gt;Chữ nghiêng&lt;/em&gt;
+          </small>
+        </div>
+
+        <div class="mb-3">
+          <label for="imageFile" class="form-label">
+            <strong>Blog Post Image</strong>
+            <span class="text-muted">(Tùy chọn)</span>
+          </label>
+          <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" />
+          <small class="form-text text-muted">
+            Upload ảnh từ máy tính (JPG, PNG, GIF). Kích thước khuyến nghị: 800x600px hoặc lớn hơn.
+          </small>
+          <div th:if="${blogPost.id != null && blogPost.imageUrl != null}" class="mt-2">
+            <p class="text-muted"><strong>Ảnh hiện tại:</strong></p>
+            <img th:src="@{'/' + ${blogPost.imageUrl}}" alt="Current blog post image" 
+                 style="max-width: 300px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;" 
+                 class="img-thumbnail" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="imageUrl" class="form-label">
+            <strong>Hoặc nhập Image URL</strong>
+            <span class="text-muted">(Nếu không upload file)</span>
+          </label>
+          <input type="text" class="form-control" id="imageUrl" th:field="*{imageUrl}" 
+                 placeholder="Ví dụ: images/post-image1.jpg hoặc images/blog-1.jpg" />
+          <small class="form-text text-muted">
+            Nhập đường dẫn ảnh đã có trong thư mục static/images/. 
+            <br>
+            <strong>Lưu ý:</strong> Nếu bạn upload file ở trên, URL này sẽ bị bỏ qua.
+          </small>
+        </div>
+
+        <div class="mb-3 p-3 bg-light rounded">
+          <h6 class="mb-2">Thông tin bổ sung:</h6>
+          <ul class="mb-0 small">
+            <li>Ngày tạo và cập nhật sẽ được tự động lưu</li>
+            <li>Blog post sẽ hiển thị trên trang chủ nếu là 3 bài mới nhất</li>
+            <li>Bạn có thể chỉnh sửa bài viết sau khi lưu</li>
+          </ul>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16" style="display: inline-block; margin-right: 5px;">
+              <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"/>
+            </svg>
+            Lưu Blog Post
+          </button>
+          <a th:href="@{/admin/blog-posts}" class="btn btn-secondary btn-lg">Hủy</a>
+          <a th:href="@{/blog}" class="btn btn-outline-info btn-lg" target="_blank">Xem Blog</a>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+
