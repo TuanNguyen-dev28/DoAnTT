@@ -228,8 +228,8 @@
                   <a th:href="@{/login}" class="text-uppercase mx-3">Login</a>
                 </li>
                 <li class="d-none d-lg-block">
-                  <a href="#" class="text-uppercase mx-3"
-                    >Wishlist <span class="wishlist-count">(0)</span>
+                  <a th:href="@{/wishlist}" class="text-uppercase mx-3"
+                    >Wishlist <span class="wishlist-count" th:text="${totalWishlistItems == null || totalWishlistItems == 0} ? '(0)' : '(' + ${totalWishlistItems} + ')'">(0)</span>
                   </a>
                 </li>
                 <li class="d-none d-lg-block">

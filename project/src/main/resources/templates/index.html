@@ -363,14 +363,15 @@
 
     <div class="search-popup">
       <div class="search-popup-container">
-        <form role="search" method="get" class="form-group" action="">
+        <form role="search" method="get" class="form-group" th:action="@{/search}">
           <input
             type="search"
             id="search-form"
             class="form-control border-0 border-bottom"
             placeholder="Type and press enter"
             value=""
-            name="s"
+            name="keyword"
+            required
           />
           <button
             type="submit"
@@ -874,7 +875,7 @@
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a href="#" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist" th:data-product-id="${product.id}" onclick="toggleWishlist(event, this)">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
@@ -987,7 +988,7 @@
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a href="#" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist" th:data-product-id="${product.id}" onclick="toggleWishlist(event, this)">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
@@ -1146,7 +1147,7 @@
                       class="product-image img-fluid"
                     />
                   </a>
-                  <a href="#" class="btn-icon btn-wishlist">
+                  <a href="#" class="btn-icon btn-wishlist" th:data-product-id="${product.id}" onclick="toggleWishlist(event, this)">
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <use xlink:href="#heart"></use>
                     </svg>
@@ -1404,5 +1405,6 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script th:src="@{/js/script.min.js}"></script>
+    <script th:src="@{/js/wishlist.js}"></script>
   </body>
 </html>
