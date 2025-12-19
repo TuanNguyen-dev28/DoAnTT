@@ -1,10 +1,23 @@
 package ecommerce.project.entity;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "orders")
@@ -28,6 +41,9 @@ public class Order {
     private String phone;
     private String email;
     private String fullName;
+
+    @Column(name = "cancellation_reason")
+    private String cancellationReason;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.EAGER)
     private Set<OrderItem> orderItems = new HashSet<>();
@@ -126,5 +142,12 @@ public class Order {
     public void setOrderItems(Set<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
-}
 
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+}

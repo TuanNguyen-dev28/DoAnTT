@@ -1,21 +1,25 @@
 package ecommerce.project.service;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ecommerce.project.entity.Cart;
 import ecommerce.project.entity.CartItem;
 import ecommerce.project.entity.Order;
 import ecommerce.project.entity.OrderItem;
 import ecommerce.project.entity.Product;
-import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.CartItemRepository;
+import ecommerce.project.repository.CartRepository;
 import ecommerce.project.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import ecommerce.project.repository.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
-
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -27,6 +31,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -108,5 +115,29 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
         return orderRepository.save(order);
     }
-}
 
+    @Override
+    @Transactional
+    public void cancelOrder(Long orderId, String username, String reason) {
+        Order order = findById(orderId);
+
+        if (!order.getUser().getUsername().equals(username)) {
+            throw new IllegalArgumentException("You are not authorized to cancel this order");
+        }
+
+        if (order.getStatus() != Order.OrderStatus.PENDING) {
+            throw new IllegalStateException("Order cannot be cancelled because it is " + order.getStatus());
+        }
+
+        for (OrderItem item : order.getOrderItems()) {
+            Product product = item.getProduct();
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+        }
+
+        order.setCancellationReason(reason);
+        log.info("Order {} cancelled by user {}. Reason: {}", orderId, username, reason);
+
+        order.setStatus(Order.OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
+}

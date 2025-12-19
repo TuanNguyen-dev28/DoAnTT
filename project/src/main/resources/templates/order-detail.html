@@ -42,6 +42,7 @@
                 <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
                 <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
                 <p><strong>Status:</strong> <span class="badge bg-primary" th:text="${order.status}"></span></p>
+                <p th:if="${order.status.name() == 'CANCELLED'}"><strong>Cancellation Reason:</strong> <span class="text-danger" th:text="${order.cancellationReason}"></span></p>
                 <p><strong>Total Price:</strong> <span th:text="'$' + ${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')}"></span></p>
               </div>
             </div>
@@ -96,6 +97,43 @@
             <div class="mt-4">
               <a th:href="@{/orders}" class="btn btn-dark">Back to Orders</a>
             </div>
+            <!-- Chỉ hiển thị nút Hủy khi trạng thái đơn hàng là PENDING -->
+<div th:if="${order.status.name() == 'PENDING'}" class="mt-3">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+        Canceled Order
+    </button>
+
+    <!-- Modal Lý do hủy -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelOrderModalLabel">Choose Reason to Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/order/{id}/cancel(id=${order.id})}" method="post">
+                    <div class="modal-body">
+                        <select class="form-select" name="reason" required>
+                            <option value="" selected disabled>Please select a reason...</option>
+                            <option value="Want to change address/phone number">Want to change address/phone number</option>
+                            <option value="Want to change product (size, color...)">Want to change product (size, color...)</option>
+                            <option value="Found a cheaper price elsewhere">Found a cheaper price elsewhere</option>
+                            <option value="Changed my mind, don't want to buy anymore">Changed my mind, don't want to buy anymore</option>
+                            <option value="Payment process is complicated">Payment process is complicated</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Confirm Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
           </div>
         </div>
       </div>
@@ -111,4 +149,3 @@
     ></script>
   </body>
 </html>
-

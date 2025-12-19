@@ -1,5 +1,32 @@
 package ecommerce.project.controller;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import ecommerce.project.entity.About;
 import ecommerce.project.entity.BlogPost;
 import ecommerce.project.entity.Contact;
@@ -16,28 +43,9 @@ import ecommerce.project.repository.ProductRepository;
 import ecommerce.project.repository.UserRepository;
 import ecommerce.project.service.OrderService;
 import ecommerce.project.service.ProductService;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-
+@Slf4j
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -118,12 +126,12 @@ public class AdminController {
         // Create directory if it doesn't exist
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
-            System.out.println("Created upload directory: " + uploadPath.toAbsolutePath());
+            log.info("Created upload directory: {}", uploadPath.toAbsolutePath());
         }
         
-        System.out.println("Using upload path: " + uploadPath.toAbsolutePath());
-        System.out.println("Upload path exists: " + Files.exists(uploadPath));
-        System.out.println("Upload path is writable: " + Files.isWritable(uploadPath));
+        log.info("Using upload path: {}", uploadPath.toAbsolutePath());
+        log.debug("Upload path exists: {}", Files.exists(uploadPath));
+        log.debug("Upload path is writable: {}", Files.isWritable(uploadPath));
         
         return uploadPath;
     }
@@ -200,16 +208,7 @@ public class AdminController {
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             RedirectAttributes redirectAttributes) {
         
-        System.out.println("=== SAVE PRODUCT DEBUG ===");
-        System.out.println("Product ID: " + product.getId());
-        System.out.println("Product Name: " + product.getName());
-        System.out.println("ImageFile is null: " + (imageFile == null));
-        if (imageFile != null) {
-            System.out.println("ImageFile is empty: " + imageFile.isEmpty());
-            System.out.println("ImageFile name: " + imageFile.getOriginalFilename());
-            System.out.println("ImageFile size: " + imageFile.getSize());
-        }
-        System.out.println("ImageUrl from form: " + product.getImageUrl());
+        log.info("Saving product: {}", product.getName());
         
         try {
             // Handle file upload if provided
@@ -239,37 +238,33 @@ public class AdminController {
                 // Save file
                 Path filePath = uploadPath.resolve(filename);
                 
-                System.out.println("Attempting to save file to: " + filePath.toAbsolutePath());
-                System.out.println("Upload path exists: " + Files.exists(uploadPath));
-                System.out.println("Upload path is writable: " + Files.isWritable(uploadPath));
+                log.debug("Attempting to save file to: {}", filePath.toAbsolutePath());
                 
                 // Copy file
                 try {
                     Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("File copy completed");
+                    log.debug("File copy completed");
                 } catch (IOException e) {
-                    System.err.println("Error copying file: " + e.getMessage());
-                    e.printStackTrace();
+                    log.error("Error copying file: {}", e.getMessage(), e);
                     redirectAttributes.addFlashAttribute("error", "Failed to save image file: " + e.getMessage());
                     return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
                 }
                 
                 // Verify file was saved
                 if (!Files.exists(filePath)) {
-                    System.err.println("File was not saved! Path: " + filePath.toAbsolutePath());
+                    log.error("File was not saved! Path: {}", filePath.toAbsolutePath());
                     redirectAttributes.addFlashAttribute("error", "Failed to save image file - file not found after copy");
                     return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
                 }
                 
                 // Check file size
                 long fileSize = Files.size(filePath);
-                System.out.println("File saved successfully! Size: " + fileSize + " bytes");
+                log.info("File saved successfully! Size: {} bytes", fileSize);
                 
                 // Set image URL (relative to static/images)
                 product.setImageUrl("images/" + filename);
                 
-                System.out.println("Image saved successfully to: " + filePath.toAbsolutePath());
-                System.out.println("Image URL set to: " + product.getImageUrl());
+                log.info("Image saved successfully to: {}", filePath.toAbsolutePath());
             } else {
                 // If no new file uploaded
                 if (product.getId() != null) {
@@ -294,28 +289,19 @@ public class AdminController {
             }
             
             // Save product to database
-            System.out.println("Saving product to database...");
-            System.out.println("Product details:");
-            System.out.println("  - Name: " + product.getName());
-            System.out.println("  - Price: " + product.getPrice());
-            System.out.println("  - ImageUrl: " + product.getImageUrl());
-            System.out.println("  - Category: " + product.getCategory());
-            System.out.println("  - Stock: " + product.getStockQuantity());
+            log.debug("Saving product to database: {}", product);
             
             Product savedProduct = productService.save(product);
             
-            System.out.println("Product saved successfully with ID: " + savedProduct.getId());
-            System.out.println("Saved product imageUrl: " + savedProduct.getImageUrl());
+            log.info("Product saved successfully with ID: {}", savedProduct.getId());
             
             redirectAttributes.addFlashAttribute("success", "Product saved successfully! Image: " + savedProduct.getImageUrl());
         } catch (IOException e) {
-            System.err.println("IOException during save: " + e.getMessage());
-            e.printStackTrace();
+            log.error("IOException during save: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Failed to upload image: " + e.getMessage());
             return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
         } catch (Exception e) {
-            System.err.println("Exception during save: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Exception during save: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Error saving product: " + e.getMessage());
             return product.getId() != null ? "redirect:/admin/products/edit/" + product.getId() : "redirect:/admin/products/add";
         }
@@ -397,13 +383,28 @@ public class AdminController {
     public String listOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Order.OrderStatus status,
             Model model) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> orderPage = orderRepository.findAll(pageable);
+        Page<Order> orderPage;
+
+        if (status != null) {
+            Order probe = new Order();
+            probe.setStatus(status);
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("status", ExampleMatcher.GenericPropertyMatchers.exact())
+                    .withIgnorePaths("id", "user", "orderDate", "totalPrice", "shippingAddress", "phone", "email", "fullName", "cancellationReason", "orderItems");
+            Example<Order> example = Example.of(probe, matcher);
+            orderPage = orderRepository.findAll(example, pageable);
+        } else {
+            orderPage = orderRepository.findAll(pageable);
+        }
+
         model.addAttribute("orders", orderPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("totalItems", orderPage.getTotalElements());
+        model.addAttribute("currentStatus", status);
         return "admin/orders";
     }
 

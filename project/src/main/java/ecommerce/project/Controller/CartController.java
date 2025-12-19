@@ -55,7 +55,7 @@ public class CartController {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + productId));
         String username = principal.getName();
-        cartService.themSanPhamVaoGio(product, quantity, username);
+        cartService.addToCart(product, quantity, username);
         redirectAttributes.addFlashAttribute("success", "Added to cart successfully!");
         
         String referer = request.getHeader("Referer");
@@ -63,18 +63,18 @@ public class CartController {
     }
 
     @PostMapping("/update-cart")
-    public String capNhatGioHang(@RequestParam("productId") Long productId,
+    public String updateCart(@RequestParam("productId") Long productId,
                              @RequestParam("quantity") int quantity,
                              Principal principal) {
         Product product = productRepository.findById(productId).orElseThrow();
         String username = principal.getName();
-        cartService.capNhatGioHang(product, quantity, username);
+        cartService.updateCart(product, quantity, username);
         return "redirect:/cart";
     }
 
     @PostMapping("/delete-from-cart/{id}")
     public String deleteItem(@PathVariable("id") Long id, Principal principal, RedirectAttributes redirectAttributes) {
-        cartService.xoaMucKhoiGioHang(id, principal.getName());
+        cartService.removeFromCart(id, principal.getName());
         redirectAttributes.addFlashAttribute("success", "Item removed from cart.");
         return "redirect:/cart";
     }
