@@ -621,11 +621,14 @@ public class AdminController {
             }
         }
         
-        // If no new file uploaded and imageUrl is empty, keep existing one
-        if ((blogPost.getImageUrl() == null || blogPost.getImageUrl().isEmpty()) && blogPost.getId() != null) {
+        // Handle existing post data (createdAt, imageUrl)
+        if (blogPost.getId() != null) {
             BlogPost existingPost = blogPostRepository.findById(blogPost.getId()).orElse(null);
             if (existingPost != null) {
-                blogPost.setImageUrl(existingPost.getImageUrl());
+                blogPost.setCreatedAt(existingPost.getCreatedAt());
+                if (blogPost.getImageUrl() == null || blogPost.getImageUrl().isEmpty()) {
+                    blogPost.setImageUrl(existingPost.getImageUrl());
+                }
             }
         }
         
